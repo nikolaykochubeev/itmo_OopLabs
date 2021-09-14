@@ -1,10 +1,13 @@
-﻿using System.Text.RegularExpressions;
-using Isu.Tools;
+﻿using Isu.Tools;
 
 namespace Isu.Entities
 {
     public class Student
     {
+        private const int MinCourse = 1;
+        private const int MaxCourse = 4;
+        private const int MinGroup = 0;
+        private const int MaxGroup = 99;
         private static int _idTemp;
         private string _groupName;
 
@@ -22,21 +25,21 @@ namespace Isu.Entities
             Id = student.Id;
         }
 
+        public string Name { get; }
+        public int Id { get; }
         public string GroupName
         {
             get => _groupName;
-            set
+            private set
             {
-                int matches = new Regex(@"^M3[1-4][0-9][0-9]$").Matches(value).Count;
-                if (matches != 1)
-                    throw new IsuException("Invalid group number ");
+                if (!value.StartsWith("M3") && value[2] - '0' > MaxCourse + 1 && value[2] - '0' < MinCourse && (value.Length != 5) &&
+                    (value[3] + value[4] - '0' is > MinGroup and < MaxGroup))
+                    throw new IsuException("Invalid group number");
                 _groupName = value;
             }
         }
 
-        public string Name { get; }
-        public int Id { get; }
-        public string Info()
+        public override string ToString()
         {
             return Name + ' ' + _groupName + ' ' + Id;
         }

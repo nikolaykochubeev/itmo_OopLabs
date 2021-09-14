@@ -21,19 +21,21 @@ namespace Isu.Services
             return _groups[name];
         }
 
-        public Student GetStudent(int id)
-        {
-            return (from @group in _groups where @group.Value.GetStudent(id) is not null select @group.Value.GetStudent(id)).FirstOrDefault();
-        }
-
         public Student AddStudent(Group @group, string name)
         {
             return group.AddStudent(name, group.GroupName);
         }
 
+        public Student GetStudent(int id)
+        {
+            return _groups
+                .Select(@group => @group.Value.GetStudent(id))
+                .FirstOrDefault();
+        }
+
         public Student FindStudent(string name)
         {
-            return (from @group in _groups where @group.Value.GetStudent(name) is not null select @group.Value.GetStudent(name)).FirstOrDefault();
+            return _groups.Select(a => a.Value.GetStudent(name)).FirstOrDefault();
         }
 
         public List<Student> FindStudents(string groupName)

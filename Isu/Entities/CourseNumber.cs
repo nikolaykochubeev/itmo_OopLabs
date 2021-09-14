@@ -4,6 +4,8 @@ namespace Isu.Entities
 {
     public class CourseNumber
     {
+        private const int MinCourse = 1;
+        private const int MaxCourse = 4;
         private int _number;
 
         public CourseNumber(int number)
@@ -16,8 +18,8 @@ namespace Isu.Entities
             get => _number;
             private set
             {
-                if (value is > 4 or < 1)
-                    throw new IsuException("Invalid course number ");
+                if (value is > MaxCourse + 1 or < MinCourse)
+                    throw new IsuException("Invalid course number");
                 _number = value;
             }
         }
