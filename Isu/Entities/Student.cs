@@ -29,7 +29,7 @@ namespace Isu.Entities
             {
                 int matches = new Regex(@"^M3[1-4][0-9][0-9]$").Matches(value).Count;
                 if (matches != 1)
-                    throw new IsuException("Invalid group number");
+                    throw new IsuException("Invalid group number ");
                 _groupName = value;
             }
         }

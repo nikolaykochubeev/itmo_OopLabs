@@ -17,7 +17,7 @@ namespace Isu.Entities
             private set
             {
                 if (value is > 4 or < 1)
-                    throw new IsuException("Invalid course number");
+                    throw new IsuException("Invalid course number ");
                 _number = value;
             }
         }

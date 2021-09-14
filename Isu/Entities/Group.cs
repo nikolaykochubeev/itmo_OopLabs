@@ -69,7 +69,7 @@ namespace Isu.Entities
         private void IsFull()
         {
             if (MaximumNumberOfStudents == Students.Count)
-                throw new IsuException("Group is full, student cannot be added");
+                throw new IsuException("Group is full, student cannot be added ");
         }
     }
 }

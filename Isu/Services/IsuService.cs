@@ -21,14 +21,14 @@ namespace Isu.Services
             return _groups[name];
         }
 
-        public Student AddStudent(Group @group, string name)
-        {
-            return group.AddStudent(name, group.GroupName);
-        }
-
         public Student GetStudent(int id)
         {
             return (from @group in _groups where @group.Value.GetStudent(id) is not null select @group.Value.GetStudent(id)).FirstOrDefault();
+        }
+
+        public Student AddStudent(Group @group, string name)
+        {
+            return group.AddStudent(name, group.GroupName);
         }
 
         public Student FindStudent(string name)
