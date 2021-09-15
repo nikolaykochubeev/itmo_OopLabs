@@ -35,7 +35,7 @@ namespace Isu.Services
 
         public Student FindStudent(string name)
         {
-            return _groups.Select(a => a.Value.GetStudent(name)).FirstOrDefault();
+            return _groups.Values.SelectMany(@group => @group.Students.Where(student => student.Name == name)).FirstOrDefault();
         }
 
         public List<Student> FindStudents(string groupName)
@@ -62,9 +62,14 @@ namespace Isu.Services
             return (from name in _groups.Keys where name[2] - '0' == courseNumber.Number select _groups[name]).ToList();
         }
 
+        public Group FindGroup(Student student)
+        {
+            return _groups.Values.FirstOrDefault(@group => @group.Students.Contains(student));
+        }
+
         public void ChangeStudentGroup(Student student, Group newGroup)
         {
-            newGroup.TransferStudent(student, _groups[student.GroupName]);
+            if (student != null) newGroup.TransferStudent(student, _groups[FindGroup(student).GroupName]);
         }
     }
 }

@@ -18,6 +18,13 @@ namespace Isu.Entities
             Id = ++_idTemp;
         }
 
+        public Student(string name, string groupName, int id)
+        {
+            Name = name;
+            _groupName = groupName;
+            Id = id;
+        }
+
         public Student(Student student)
         {
             _groupName = student._groupName;
@@ -32,8 +39,8 @@ namespace Isu.Entities
             get => _groupName;
             private set
             {
-                if (!value.StartsWith("M3") && value[2] - '0' > MaxCourse + 1 && value[2] - '0' < MinCourse && (value.Length != 5) &&
-                    (value[3] + value[4] - '0' is > MinGroup and < MaxGroup))
+                if (!(value.StartsWith("M3") && value[2] - '0' <= MaxCourse && value[2] - '0' < MinCourse && (value.Length != 5) &&
+                      (value[3] + value[4] - '0' is > MinGroup and < MaxGroup)))
                     throw new IsuException("Invalid group number");
                 _groupName = value;
             }

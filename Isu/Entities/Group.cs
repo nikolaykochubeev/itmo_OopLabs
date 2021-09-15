@@ -24,8 +24,8 @@ namespace Isu.Entities
             get => _groupName;
             private set
             {
-                if (!value.StartsWith("M3") && value[2] - '0' > MaxCourse + 1 && value[2] - '0' < MinCourse && (value.Length != 5) &&
-                    (value[3] + value[4] - '0' is > MinGroup and < MaxGroup))
+                if (!(value.StartsWith("M3") && value[2] - '0' <= MaxCourse && value[2] - '0' >= MinCourse && (value.Length == 5) &&
+                    (value[3] + value[4] - '0' is > MinGroup and < MaxGroup)))
                     throw new IsuException("Invalid group number");
                 _groupName = value;
             }
@@ -42,10 +42,18 @@ namespace Isu.Entities
             return Students.Last();
         }
 
+        public Student AddStudent(string name, string groupNumber, int id)
+        {
+            if (MaximumNumberOfStudents == Students.Count)
+                throw new IsuException("Group is full, student cannot be added");
+            Students.Add(new Student(name, groupNumber, id));
+            return Students.Last();
+        }
+
         public void TransferStudent(Student student, Group oldGroup)
         {
-            oldGroup.RemoveStudent(student);
-            AddStudent(student.Name, student.GroupName);
+            oldGroup.Students.Remove(student);
+            AddStudent(student.Name, GroupName, student.Id);
         }
 
         public Student GetStudent(int id)
@@ -56,13 +64,6 @@ namespace Isu.Entities
         public Student GetStudent(string name)
         {
             return Students.FirstOrDefault(student => student.Name == name);
-        }
-
-        private void RemoveStudent(Student student)
-        {
-            if (student.GroupName != _groupName)
-                throw new Exception("The student you want to transfer is located in a different group");
-            Students.Remove(student);
         }
     }
 }
