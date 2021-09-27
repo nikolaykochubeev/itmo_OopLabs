@@ -1,3 +1,4 @@
+using Isu.Entities;
 using Isu.Services;
 using Isu.Tools;
 using NUnit.Framework;
@@ -11,22 +12,24 @@ namespace Isu.Tests
         [SetUp]
         public void Setup()
         {
-            //TODO: implement
-            _isuService = null;
+            _isuService = new IsuService(20);
         }
 
         [Test]
         public void AddStudentToGroup_StudentHasGroupAndGroupContainsStudent()
         {
-            Assert.Fail();
-        }
+            _isuService.AddStudent(_isuService.AddGroup("M3200"), "Иван Иванович");
+            Assert.Contains(_isuService.FindStudent("Иван Иванович"), _isuService.FindGroup("M3200").Students);
+        }  
 
         [Test]
         public void ReachMaxStudentPerGroup_ThrowException()
         {
             Assert.Catch<IsuException>(() =>
             {
-                
+                _isuService.AddGroup("M3200");
+                for (int i = 0; i < 100; i++)
+                    _isuService.AddStudent(_isuService.FindGroup("M3200"), "Стас Васильев");
             });
         }
 
@@ -35,17 +38,19 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-
+                _isuService.AddGroup("M3508");
             });
         }
 
         [Test]
         public void TransferStudentToAnotherGroup_GroupChanged()
         {
-            Assert.Catch<IsuException>(() =>
-            {
-
-            });
+            _isuService.AddGroup("M3200");
+            _isuService.AddGroup("M3201");
+            _isuService.AddStudent(_isuService.FindGroup("M3201"), "qwerty");
+            _isuService.ChangeStudentGroup(_isuService.FindStudent("qwerty"), _isuService.FindGroup("M3200"));
+            CollectionAssert.Contains(_isuService.FindGroup("M3200").Students, _isuService.FindStudent("qwerty"));
+            CollectionAssert.DoesNotContain(_isuService.FindGroup("M3201").Students, _isuService.FindStudent("qwerty"));
         }
     }
 }
