@@ -27,9 +27,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services" />
-    <Folder Include="Tools" />
-  </ItemGroup>
-
 </Project>
