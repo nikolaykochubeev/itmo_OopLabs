@@ -4,15 +4,15 @@ namespace Shops.Entities
 {
     public class ShopProduct : Product
     {
-        private double _price;
-        public ShopProduct(Product product, uint number, double price)
+        private decimal _price;
+        public ShopProduct(Product product, uint number, decimal price)
             : base(product.Name, product.Id)
         {
             Number = number;
             Price = price;
         }
 
-        public double Price
+        public decimal Price
         {
             get => _price;
             private set
@@ -24,7 +24,7 @@ namespace Shops.Entities
         }
 
         public uint Number { get; }
-        public ShopProduct ChangePrice(double price)
+        public ShopProduct ChangePrice(decimal price)
         {
             return new ShopProduct(new Product(Name, Id), Number, price);
         }

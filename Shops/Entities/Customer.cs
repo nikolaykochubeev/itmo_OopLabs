@@ -5,22 +5,22 @@ namespace Shops.Entities
 {
     public class Customer
     {
-        private double _money;
-        public Customer(string name, double money)
+        private decimal _money;
+        public Customer(string name, decimal money)
         {
             Name = name;
             Money = money;
         }
 
-        public Customer(Customer customer, List<CustomerProduct> products)
-            : this(customer.Name, customer.Money)
+        private Customer(Customer customer, decimal money, List<CustomerProduct> products)
+            : this(customer.Name, money)
         {
             Products = products;
         }
 
         public string Name { get; }
 
-        public double Money
+        public decimal Money
         {
             get => _money;
             private set
@@ -38,9 +38,9 @@ namespace Shops.Entities
             Products.AddRange(products);
         }
 
-        public Customer ChangeMoneyValue(double money)
+        public Customer ChangeMoneyValue(decimal money)
         {
-            return new Customer(this, Products);
+            return new Customer(this, money, Products);
         }
     }
 }

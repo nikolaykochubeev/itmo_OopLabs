@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using Shops.Entities;
 using Shops.Tools;
 
@@ -11,10 +10,6 @@ namespace Shops.Services
     {
         private readonly Dictionary<Guid, Shop> _shops = new ();
         private readonly Dictionary<Guid, Product> _products = new ();
-
-        public ShopManager()
-        {
-        }
 
         public Shop AddShop(string name, string address)
         {
@@ -29,7 +24,7 @@ namespace Shops.Services
                 : _shops[shopId].AddProduct(shopProduct);
         }
 
-        public ShopProduct AddProductToShop(Guid shopId, Guid productId, uint number, double price)
+        public ShopProduct AddProductToShop(Guid shopId, Guid productId, uint number, decimal price)
         {
             return !_products.ContainsKey(productId)
                ? throw new ShopException("This product is not register in ShopManager")
@@ -77,7 +72,7 @@ namespace Shops.Services
             return _products[guid] = new Product(name, guid);
         }
 
-        public void ChangePrice(Guid shopId, Guid productId, double newPrice)
+        public void ChangePrice(Guid shopId, Guid productId, decimal newPrice)
         {
             _shops[shopId].Products[productId] = _shops[shopId].FindProduct(productId).ChangePrice(newPrice);
         }
@@ -89,7 +84,7 @@ namespace Shops.Services
             bool isAnyoneHasProduct = false;
             var checkId = Guid.NewGuid();
             var cheapestShop = new Shop("-", "-", checkId);
-            AddProductToShop(cheapestShop.Id, productId, number, double.MaxValue);
+            AddProductToShop(cheapestShop.Id, productId, number, decimal.MaxValue);
 
             foreach (Shop shop in _shops.Values.Where(shop => shop.Products.ContainsKey(productId)))
             {

@@ -66,8 +66,8 @@ namespace Shops.Tests
         [Test]
         public void CheckingInstallationAndPriceChangesInShop()
         {
-            double priceBefore = 10;
-            double priceAfter = 15;
+            decimal priceBefore = 10;
+            decimal priceAfter = 15;
             
             Shop shop = _shopManager.AddShop("okey", "spb");
             var product = new ShopProduct(_shopManager.RegisterProduct("Bread"), 10, priceBefore);
