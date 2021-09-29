@@ -25,8 +25,8 @@ namespace Shops.Tests
                 Shop shop1 = _shopManager.AddShop("okey", "spb");
                 Product product1 = _shopManager.RegisterProduct("Bread");
                 customer.AddProducts(new List<CustomerProduct>() {new CustomerProduct(product1, 2)});
-                _shopManager.AddProductToShop(shop1, product1, 10, 100);
-                _shopManager.BuyInShop(shop1, customer);
+                _shopManager.AddProductToShop(shop1.Id, product1.Id, 10, 100);
+                _shopManager.BuyInShop(shop1.Id, customer);
             });
         }
         [Test]
@@ -38,8 +38,8 @@ namespace Shops.Tests
                 Shop shop1 = _shopManager.AddShop("okey", "spb");
                 Product product1 = _shopManager.RegisterProduct("Bread");
                 customer.AddProducts(new List<CustomerProduct>() {new CustomerProduct(product1, 10)});
-                _shopManager.AddProductToShop(shop1, product1, 1, 1);
-                _shopManager.BuyInShop(shop1, customer);
+                _shopManager.AddProductToShop(shop1.Id, product1.Id, 1, 1);
+                _shopManager.BuyInShop(shop1.Id, customer);
             });
         }
         [Test]
@@ -49,7 +49,7 @@ namespace Shops.Tests
             {
                 Shop shop1 = _shopManager.AddShop("okey", "spb");
                 var product1 = new Product("Smuggling bread", Guid.NewGuid());
-                _shopManager.AddProductToShop(shop1, product1, 10, 100);
+                _shopManager.AddProductToShop(shop1.Id, product1.Id, 10, 100);
             });
         }
         [Test]
@@ -58,7 +58,7 @@ namespace Shops.Tests
             Shop shop1 = _shopManager.AddShop("okey", "spb");
             var product1 = new ShopProduct(_shopManager.RegisterProduct("Milk"), 10, 15);
             var product2 = new ShopProduct(_shopManager.RegisterProduct("Milk"), 10, 15);
-            _shopManager.SupplyToShop(shop1, new Dictionary<Guid, ShopProduct>() {{product1.Id, product1}, {product2.Id, product2}});
+            _shopManager.SupplyToShop(shop1.Id, new List<ShopProduct>() {product1, product2});
             Assert.Contains(product1, shop1.Products.Values);
             Assert.Contains(product2, shop1.Products.Values);
         }
@@ -66,14 +66,14 @@ namespace Shops.Tests
         [Test]
         public void CheckingInstallationAndPriceChangesInShop()
         {
-            float priceBefore = 10;
-            float priceAfter = 15;
+            double priceBefore = 10;
+            double priceAfter = 15;
             
             Shop shop = _shopManager.AddShop("okey", "spb");
-            Product product = _shopManager.RegisterProduct("Bread");
-            _shopManager.AddProductToShop(shop, product, 10, priceBefore);
+            var product = new ShopProduct(_shopManager.RegisterProduct("Bread"), 10, priceBefore);
+            _shopManager.AddProductToShop(shop.Id, product);
             Assert.AreEqual(shop.FindProduct(product.Id).Price, priceBefore);
-            _shopManager.ChangePrice(shop, product, priceAfter);
+            _shopManager.ChangePrice(shop.Id, product.Id, priceAfter);
             Assert.AreEqual(shop.FindProduct(product.Id).Price, priceAfter);
         }
     }

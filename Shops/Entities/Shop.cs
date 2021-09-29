@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Shops.Tools;
 
 namespace Shops.Entities
@@ -17,6 +18,12 @@ namespace Shops.Entities
         public Guid Id { get; }
         public string ShopName { get; }
         public string Address { get; }
+        public ShopProduct AddProduct(ShopProduct shopProduct)
+        {
+            Products.Add(shopProduct.Id, shopProduct);
+            return Products[shopProduct.Id];
+        }
+
         public ShopProduct FindProduct(Guid id)
         {
             return Products.ContainsKey(id) ? Products[id] : null;

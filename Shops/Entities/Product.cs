@@ -10,10 +10,6 @@ namespace Shops.Entities
         }
 
         public Guid Id { get; }
-        public string Name { get; protected set; }
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+        public string Name { get; }
     }
 }

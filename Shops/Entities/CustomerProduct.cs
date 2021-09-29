@@ -8,6 +8,6 @@
             NumberOfProducts = numberOfProducts;
         }
 
-        public uint NumberOfProducts { get; set; }
+        public uint NumberOfProducts { get; }
     }
 }

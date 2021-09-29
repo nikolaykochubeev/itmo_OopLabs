@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Shops.Entities;
 using Shops.Tools;
 
@@ -21,51 +22,45 @@ namespace Shops.Services
             return _shops[guid] = new Shop(name, address, guid);
         }
 
-        public Product AddProductToShop(Shop shop, Product product, uint number, float price)
+        public ShopProduct AddProductToShop(Guid shopId, ShopProduct shopProduct)
         {
-            return !_products.ContainsKey(product.Id)
+            return !_products.ContainsKey(shopProduct.Id)
                 ? throw new ShopException("This product is not register in ShopManager")
-                : shop.Products[product.Id] = new ShopProduct(product, number, price);
+                : _shops[shopId].AddProduct(shopProduct);
         }
 
-        public void SupplyToShop(Shop shop, Dictionary<Guid, Tuple<Product, uint, float>> products)
+        public ShopProduct AddProductToShop(Guid shopId, Guid productId, uint number, double price)
         {
-            foreach ((Guid id, (Product value, uint number, float price)) in products)
+            return !_products.ContainsKey(productId)
+               ? throw new ShopException("This product is not register in ShopManager")
+               : _shops[shopId].AddProduct(new ShopProduct(_products[productId], number, price));
+        }
+
+        public void SupplyToShop(Guid shopId, List<ShopProduct> products)
+        {
+            foreach (ShopProduct shopProduct in products)
             {
-                if (!_products.ContainsKey(id))
+                if (!_products.ContainsKey(shopProduct.Id))
                     throw new ShopException("Some product from the supply is not registered in ShopManager");
-                if (shop.FindProduct(id) == null)
-                    shop.Products.Add(id, new ShopProduct(value, number, price));
+                if (_shops[shopId].FindProduct(shopProduct.Id) == null)
+                    _shops[shopId].AddProduct(shopProduct);
                 else
-                    shop.FindProduct(id).Number += number;
+                    _shops[shopId].FindProduct(shopProduct.Id).ChangeNumber((int)shopProduct.Number);
             }
         }
 
-        public void SupplyToShop(Shop shop, Dictionary<Guid, ShopProduct> products)
-        {
-            foreach ((Guid id, ShopProduct value) in products)
-            {
-                if (!_products.ContainsKey(id))
-                    throw new ShopException("Some product from the supply is not registered in ShopManager");
-                if (shop.FindProduct(id) == null)
-                    shop.Products.Add(id, value);
-                else
-                    shop.FindProduct(id).Number += value.Number;
-            }
-        }
-
-        public Customer BuyInShop(Shop shop, Customer customer)
+        public Customer BuyInShop(Guid shopId, Customer customer)
         {
             foreach (CustomerProduct product in customer.Products)
             {
                 if (!_products.ContainsKey(product.Id))
                     throw new ShopException("Some product from the supply is not registered in ShopManager");
-                if (customer.Money < shop.FindProduct(product.Id).Price * product.NumberOfProducts)
+                if (customer.Money < _shops[shopId].FindProduct(product.Id).Price * product.NumberOfProducts)
                     throw new ShopException("Customer hasn't got enough money");
-                if (product.NumberOfProducts > shop.FindProduct(product.Id).Number)
+                if (product.NumberOfProducts > _shops[shopId].FindProduct(product.Id).Number)
                     throw new ShopException("Shop hasn't got enough products");
-                shop.FindProduct(product.Id).Number -= product.NumberOfProducts;
-                customer.Money -= shop.FindProduct(product.Id).Price * product.NumberOfProducts;
+                _shops[shopId].FindProduct(product.Id).ChangeNumber(-(int)product.NumberOfProducts);
+                customer = customer.ChangeMoneyValue(_shops[shopId].FindProduct(product.Id).Price * product.NumberOfProducts);
             }
 
             return customer;
@@ -82,25 +77,25 @@ namespace Shops.Services
             return _products[guid] = new Product(name, guid);
         }
 
-        public void ChangePrice(Shop shop, Product product, float newPrice)
+        public void ChangePrice(Guid shopId, Guid productId, double newPrice)
         {
-            _shops[shop.Id].FindProduct(product.Id).Price = newPrice;
+            _shops[shopId].Products[productId] = _shops[shopId].FindProduct(productId).ChangePrice(newPrice);
         }
 
-        public Shop FindShopWithCheapestProduct(Product product, uint number)
+        public Shop FindShopWithCheapestProduct(Guid productId, uint number)
         {
-            if (!_products.ContainsKey(product.Id))
+            if (!_products.ContainsKey(productId))
                 throw new ShopException("This product is not register in ShopManager");
             bool isAnyoneHasProduct = false;
             var checkId = Guid.NewGuid();
             var cheapestShop = new Shop("-", "-", checkId);
-            AddProductToShop(cheapestShop, product, number, float.MaxValue);
+            AddProductToShop(cheapestShop.Id, productId, number, double.MaxValue);
 
-            foreach (Shop shop in _shops.Values.Where(shop => shop.Products.ContainsKey(product.Id)))
+            foreach (Shop shop in _shops.Values.Where(shop => shop.Products.ContainsKey(productId)))
             {
                 isAnyoneHasProduct = true;
-                if (shop.FindProduct(product.Id).Price <= cheapestShop.FindProduct(product.Id).Price
-                    && cheapestShop.FindProduct(product.Id).Number >= number)
+                if (shop.FindProduct(productId).Price <= cheapestShop.FindProduct(productId).Price
+                    && cheapestShop.FindProduct(productId).Number >= number)
                     cheapestShop = shop;
             }
 
@@ -110,18 +105,5 @@ namespace Shops.Services
                 throw new ShopException("Store with so many of the products does not exist");
             throw new ShopException("This product is not available in any of the stores");
         }
-
-        // public Product CheckingProductRegistration(Guid idProduct)
-        // {
-        //     if (_products.ContainsKey(idProduct))
-        //         return _products[idProduct];
-        //     else
-        //         throw new ShopException("Product" + _products[idProduct].Id + "is not registered in ShopManager");
-        // }
-
-        // foreach (Shop shop in _shops.Values.Where(shop => shop.Products.ContainsKey(product.Id))
-        // .Where(shop => shop.Products[product.Id].Price <= shopWithCheapestProduct.Products[product.Id].Price
-        // && shopWithCheapestProduct.Products[product.Id].Number >= number))
-        // shopWithCheapestProduct = shop;
     }
 }
