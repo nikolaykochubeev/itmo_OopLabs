@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Isu.Entities;
 
@@ -23,10 +24,10 @@ namespace Isu.Services
 
         public Student AddStudent(Group @group, string name)
         {
-            return group.AddStudent(name, group.GroupName);
+            return group.AddStudent(new Student(Guid.NewGuid(), name, group.GroupName));
         }
 
-        public Student GetStudent(int id)
+        public Student GetStudent(Guid id)
         {
             return _groups
                 .Select(@group => @group.Value.GetStudent(id))
