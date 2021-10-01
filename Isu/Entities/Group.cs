@@ -34,29 +34,21 @@ namespace Isu.Entities
         public List<Student> Students { get; }
         public int MaximumNumberOfStudents { get; }
 
-        public Student AddStudent(string name, string groupNumber)
+        public Student AddStudent(Student student)
         {
             if (MaximumNumberOfStudents == Students.Count)
                 throw new IsuException("Group is full, student cannot be added");
-            Students.Add(new Student(name, groupNumber));
-            return Students.Last();
-        }
-
-        public Student AddStudent(string name, string groupNumber, int id)
-        {
-            if (MaximumNumberOfStudents == Students.Count)
-                throw new IsuException("Group is full, student cannot be added");
-            Students.Add(new Student(name, groupNumber, id));
+            Students.Add(student);
             return Students.Last();
         }
 
         public void TransferStudent(Student student, Group oldGroup)
         {
             oldGroup.Students.Remove(student);
-            AddStudent(student.Name, GroupName, student.Id);
+            AddStudent(new Student(student.Id, student.Name, GroupName));
         }
 
-        public Student GetStudent(int id)
+        public Student GetStudent(Guid id)
         {
             return Students.FirstOrDefault(student => student.Id == id);
         }

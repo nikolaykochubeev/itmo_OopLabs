@@ -1,4 +1,5 @@
-﻿using Isu.Tools;
+﻿using System;
+using Isu.Tools;
 
 namespace Isu.Entities
 {
@@ -8,21 +9,12 @@ namespace Isu.Entities
         private const int MaxCourse = 4;
         private const int MinGroup = 0;
         private const int MaxGroup = 99;
-        private static int _idTemp;
         private string _groupName;
 
-        public Student(string name, string groupName)
+        public Student(Guid id, string name, string groupName)
         {
             Name = name;
             _groupName = groupName;
-            Id = ++_idTemp;
-        }
-
-        public Student(string name, string groupName, int id)
-        {
-            Name = name;
-            _groupName = groupName;
-            Id = id;
         }
 
         public Student(Student student)
@@ -33,7 +25,7 @@ namespace Isu.Entities
         }
 
         public string Name { get; }
-        public int Id { get; }
+        public Guid Id { get; }
         public string GroupName
         {
             get => _groupName;

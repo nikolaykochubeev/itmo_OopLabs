@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Isu.Entities;
 
@@ -5,17 +6,23 @@ namespace Isu.Services
 {
     public interface IIsuService
     {
-        Group AddGroup(string name);
-        Student AddStudent(Group group, string name);
+        public Group AddGroup(string name);
+        public Student AddStudent(Group @group, string name);
 
-        Student GetStudent(int id);
-        Student FindStudent(string name);
-        List<Student> FindStudents(string groupName);
-        List<Student> FindStudents(CourseNumber courseNumber);
+        public Student GetStudent(Guid id);
 
-        Group FindGroup(string groupName);
-        List<Group> FindGroups(CourseNumber courseNumber);
+        public Student FindStudent(string name);
 
-        void ChangeStudentGroup(Student student, Group newGroup);
+        public List<Student> FindStudents(string groupName);
+
+        public List<Student> FindStudents(CourseNumber courseNumber);
+
+        public Group FindGroup(string groupName);
+
+        public List<Group> FindGroups(CourseNumber courseNumber);
+
+        public Group FindGroup(Student student);
+
+        public void ChangeStudentGroup(Student student, Group newGroup);
     }
 }
