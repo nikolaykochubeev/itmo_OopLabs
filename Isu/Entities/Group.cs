@@ -12,8 +12,10 @@ namespace Isu.Entities
         private const int MinGroup = 0;
         private const int MaxGroup = 99;
         private string _groupName;
-        public Group(string groupName, int maximumNumberOfStudents)
+        private string _megaFacultyCode;
+        public Group(string groupName, int maximumNumberOfStudents, string megaFacultyCode = "M3")
         {
+            _megaFacultyCode = megaFacultyCode;
             GroupName = groupName;
             Students = new List<Student>();
             MaximumNumberOfStudents = maximumNumberOfStudents;
@@ -24,7 +26,7 @@ namespace Isu.Entities
             get => _groupName;
             private set
             {
-                if (!(value.StartsWith("M3") && value[2] - '0' <= MaxCourse && value[2] - '0' >= MinCourse && (value.Length == 5) &&
+                if (!(value.StartsWith(_megaFacultyCode) && value[2] - '0' <= MaxCourse && value[2] - '0' >= MinCourse && (value.Length == 5) &&
                     (value[3] + value[4] - '0' is > MinGroup and < MaxGroup)))
                     throw new IsuException("Invalid group number");
                 _groupName = value;
