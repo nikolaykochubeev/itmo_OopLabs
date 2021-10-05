@@ -81,24 +81,8 @@ namespace Shops.Services
         {
             if (!_products.ContainsKey(productId))
                 throw new ShopException("This product is not register in ShopManager");
-            bool isAnyoneHasProduct = false;
-            var checkId = Guid.NewGuid();
-            var cheapestShop = new Shop("-", "-", checkId);
-            AddProductToShop(cheapestShop.Id, productId, number, decimal.MaxValue);
-
-            foreach (Shop shop in _shops.Values.Where(shop => shop.Products.ContainsKey(productId)))
-            {
-                isAnyoneHasProduct = true;
-                if (shop.FindProduct(productId).Price <= cheapestShop.FindProduct(productId).Price
-                    && cheapestShop.FindProduct(productId).Number >= number)
-                    cheapestShop = shop;
-            }
-
-            if (cheapestShop.Id != checkId)
-                return cheapestShop;
-            if (isAnyoneHasProduct)
-                throw new ShopException("Store with so many of the products does not exist");
-            throw new ShopException("This product is not available in any of the stores");
+            decimal minPrice = _shops.Values.Where(shop => shop.Products.Values.FirstOrDefault(product => product.Id == productId) != null).Min(shop => shop.Products[productId].Price);
+            return _shops.Values.FirstOrDefault(shop => shop.Products.Values.FirstOrDefault(product => product.Price == minPrice && product.Id == productId) != null);
         }
     }
 }

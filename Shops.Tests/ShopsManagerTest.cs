@@ -53,7 +53,7 @@ namespace Shops.Tests
             });
         }
         [Test]
-        public void SupplyProductsToShopWithEqualNamesPricesNumbers()
+        public void SupplyProductsToShopWithEqualNamesPricesNumbers_()
         {
             Shop shop1 = _shopManager.AddShop("okey", "spb");
             var product1 = new ShopProduct(_shopManager.RegisterProduct("Milk"), 10, 15);
