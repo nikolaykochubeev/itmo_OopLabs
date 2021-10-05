@@ -53,7 +53,7 @@ namespace Shops.Tests
             });
         }
         [Test]
-        public void SupplyProductsToShopWithEqualNamesPricesNumbers_()
+        public void SupplyProductsToShopWithEqualNamesPricesNumbers_AndCheckOnAvailabilityInTheShop()
         {
             Shop shop1 = _shopManager.AddShop("okey", "spb");
             var product1 = new ShopProduct(_shopManager.RegisterProduct("Milk"), 10, 15);
@@ -64,7 +64,7 @@ namespace Shops.Tests
         }
 
         [Test]
-        public void CheckingInstallationAndPriceChangesInShop()
+        public void SetPriceAndChangePriceInShop()
         {
             decimal priceBefore = 10;
             decimal priceAfter = 15;
