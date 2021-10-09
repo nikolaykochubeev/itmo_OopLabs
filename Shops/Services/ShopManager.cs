@@ -81,8 +81,7 @@ namespace Shops.Services
         {
             if (!_products.ContainsKey(productId))
                 throw new ShopException("This product is not register in ShopManager");
-            decimal minPrice = _shops.Values.Where(shop => shop.Products.Values.FirstOrDefault(product => product.Id == productId) != null).Min(shop => shop.Products[productId].Price);
-            return _shops.Values.FirstOrDefault(shop => shop.Products.Values.FirstOrDefault(product => product.Price == minPrice && product.Id == productId) != null);
+            return _shops.Values.Where(shop => shop.Products.ContainsKey(productId)).Where(shop => shop.Products[productId].Number >= number).OrderBy(shop => shop.Products[productId].Price).First();
         }
     }
 }
