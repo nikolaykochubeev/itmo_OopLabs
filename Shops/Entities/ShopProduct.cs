@@ -5,10 +5,10 @@ namespace Shops.Entities
     public class ShopProduct : Product
     {
         private decimal _price;
-        public ShopProduct(Product product, uint number, decimal price)
-            : base(product.Name, product.Id)
+        public ShopProduct(Product product, uint amount, decimal price)
+            : base(product.Id, product.Name)
         {
-            Number = number;
+            Amount = amount;
             Price = price;
         }
 
@@ -23,15 +23,15 @@ namespace Shops.Entities
             }
         }
 
-        public uint Number { get; }
+        public uint Amount { get; }
         public ShopProduct ChangePrice(decimal price)
         {
-            return new ShopProduct(new Product(Name, Id), Number, price);
+            return new ShopProduct(new Product(Id, Name), Amount, price);
         }
 
         public ShopProduct ChangeNumber(int number)
         {
-            return new ShopProduct(new Product(Name, Id), (uint)(number + Number), Price);
+            return new ShopProduct(new Product(Id, Name), (uint)(number + Amount), Price);
         }
     }
 }

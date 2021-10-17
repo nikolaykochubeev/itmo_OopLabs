@@ -3,7 +3,7 @@ namespace Shops.Entities
 {
     public class Product
     {
-        public Product(string name, Guid id)
+        public Product(Guid id, string name)
         {
             Id = id;
             Name = name;

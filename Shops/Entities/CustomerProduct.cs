@@ -3,7 +3,7 @@
     public class CustomerProduct : Product
     {
         public CustomerProduct(Product product, uint numberOfProducts)
-            : base(product.Name, product.Id)
+            : base(product.Id, product.Name)
         {
             NumberOfProducts = numberOfProducts;
         }

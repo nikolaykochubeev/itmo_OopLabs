@@ -12,10 +12,9 @@ namespace Shops.Entities
             Money = money;
         }
 
-        private Customer(Customer customer, decimal money, List<CustomerProduct> products)
+        private Customer(Customer customer, decimal money)
             : this(customer.Name, money)
         {
-            Products = products;
         }
 
         public string Name { get; }
@@ -31,16 +30,9 @@ namespace Shops.Entities
             }
         }
 
-        public List<CustomerProduct> Products { get; } = new ();
-
-        public void AddProducts(IEnumerable<CustomerProduct> products)
-        {
-            Products.AddRange(products);
-        }
-
         public Customer ChangeMoneyValue(decimal money)
         {
-            return new Customer(this, money, Products);
+            return new Customer(this, money);
         }
     }
 }

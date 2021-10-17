@@ -8,80 +8,36 @@ namespace Shops.Services
 {
     public class ShopManager : IShopManager
     {
-        private readonly Dictionary<Guid, Shop> _shops = new ();
-        private readonly Dictionary<Guid, Product> _products = new ();
+        private readonly List<Shop> _shops;
 
-        public Shop AddShop(string name, string address)
+        public ShopManager(List<Shop> shops = null)
         {
-            var guid = Guid.NewGuid();
-            return _shops[guid] = new Shop(name, address, guid);
+            _shops = shops ?? new List<Shop>();
         }
 
-        public ShopProduct AddProductToShop(Guid shopId, ShopProduct shopProduct)
+        public IReadOnlyList<Shop> Shops => _shops;
+        public Shop RegisterShop(Shop shop)
         {
-            return !_products.ContainsKey(shopProduct.Id)
-                ? throw new ShopException("This product is not register in ShopManager")
-                : _shops[shopId].AddProduct(shopProduct);
-        }
+            if (shop is null)
+                throw new ShopException("Shop cannot be the null");
 
-        public ShopProduct AddProductToShop(Guid shopId, Guid productId, uint number, decimal price)
-        {
-            return !_products.ContainsKey(productId)
-               ? throw new ShopException("This product is not register in ShopManager")
-               : _shops[shopId].AddProduct(new ShopProduct(_products[productId], number, price));
-        }
+            if (_shops.FirstOrDefault(shopM => shopM.Id == shop.Id) is not null)
+                throw new ShopException("Shop already registered");
 
-        public void SupplyToShop(Guid shopId, List<ShopProduct> products)
-        {
-            foreach (ShopProduct shopProduct in products)
-            {
-                if (!_products.ContainsKey(shopProduct.Id))
-                    throw new ShopException("Some product from the supply is not registered in ShopManager");
-                if (_shops[shopId].FindProduct(shopProduct.Id) == null)
-                    _shops[shopId].AddProduct(shopProduct);
-                else
-                    _shops[shopId].FindProduct(shopProduct.Id).ChangeNumber((int)shopProduct.Number);
-            }
-        }
-
-        public Customer BuyInShop(Guid shopId, Customer customer)
-        {
-            foreach (CustomerProduct product in customer.Products)
-            {
-                if (!_products.ContainsKey(product.Id))
-                    throw new ShopException("Some product from the supply is not registered in ShopManager");
-                if (customer.Money < _shops[shopId].FindProduct(product.Id).Price * product.NumberOfProducts)
-                    throw new ShopException("Customer hasn't got enough money");
-                if (product.NumberOfProducts > _shops[shopId].FindProduct(product.Id).Number)
-                    throw new ShopException("Shop hasn't got enough products");
-                _shops[shopId].FindProduct(product.Id).ChangeNumber(-(int)product.NumberOfProducts);
-                customer = customer.ChangeMoneyValue(_shops[shopId].FindProduct(product.Id).Price * product.NumberOfProducts);
-            }
-
-            return customer;
+            _shops.Add(shop);
+            return _shops.Last();
         }
 
         public Shop FindShop(Guid id)
         {
-            return _shops[id];
+            return _shops.FirstOrDefault(shop => shop.Id == id);
         }
 
-        public Product RegisterProduct(string name)
+        public Shop FindShopWithCheapestProduct(Guid productId, uint amount)
         {
-            var guid = Guid.NewGuid();
-            return _products[guid] = new Product(name, guid);
-        }
-
-        public void ChangePrice(Guid shopId, Guid productId, decimal newPrice)
-        {
-            _shops[shopId].Products[productId] = _shops[shopId].FindProduct(productId).ChangePrice(newPrice);
-        }
-
-        public Shop FindShopWithCheapestProduct(Guid productId, uint number)
-        {
-            if (!_products.ContainsKey(productId))
-                throw new ShopException("This product is not register in ShopManager");
-            return _shops.Values.Where(shop => shop.Products.ContainsKey(productId)).Where(shop => shop.Products[productId].Number >= number).OrderBy(shop => shop.Products[productId].Price).First();
+            return _shops.Where(shop => shop.FindProduct(productId) is not null)
+                         .Where(shop => shop.FindProduct(productId).Amount >= amount)
+                         .OrderBy(shop => shop.FindProduct(productId).Price).First();
         }
     }
 }
