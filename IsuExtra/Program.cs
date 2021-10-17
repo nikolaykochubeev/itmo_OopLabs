@@ -1,4 +1,6 @@
-﻿namespace IsuExtra
+﻿using System;
+
+namespace IsuExtra
 {
     internal class Program
     {

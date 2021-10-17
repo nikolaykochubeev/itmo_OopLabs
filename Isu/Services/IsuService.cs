@@ -39,7 +39,7 @@ namespace Isu.Services
             return _groups.Values.SelectMany(@group => @group.Students.Where(student => student.Name == name)).FirstOrDefault();
         }
 
-        public List<Student> FindStudents(string groupName)
+        public IReadOnlyList<Student> FindStudents(string groupName)
         {
             return _groups.ContainsKey(groupName) ? _groups[groupName].Students : new List<Student>();
         }

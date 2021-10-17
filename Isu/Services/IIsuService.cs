@@ -13,7 +13,7 @@ namespace Isu.Services
 
         public Student FindStudent(string name);
 
-        public List<Student> FindStudents(string groupName);
+        public IReadOnlyList<Student> FindStudents(string groupName);
 
         public List<Student> FindStudents(CourseNumber courseNumber);
 

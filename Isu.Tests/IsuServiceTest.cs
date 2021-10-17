@@ -1,4 +1,3 @@
-using Isu.Entities;
 using Isu.Services;
 using Isu.Tools;
 using NUnit.Framework;
@@ -19,7 +18,7 @@ namespace Isu.Tests
         public void AddStudentToGroup_StudentHasGroupAndGroupContainsStudent()
         {
             _isuService.AddStudent(_isuService.AddGroup("M3200"), "Иван Иванович");
-            Assert.Contains(_isuService.FindStudent("Иван Иванович"), _isuService.FindGroup("M3200").Students);
+            CollectionAssert.Contains(_isuService.FindGroup("M3200").Students, _isuService.FindStudent("Иван Иванович"));
         }  
 
         [Test]

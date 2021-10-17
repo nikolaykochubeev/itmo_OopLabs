@@ -11,12 +11,13 @@ namespace Isu.Entities
         private const int MaxCourse = 4;
         private const int MinGroup = 0;
         private const int MaxGroup = 99;
+        private readonly List<Student> _students;
         private string _groupName;
         public Group(string groupName, int maximumNumberOfStudents, string prefix = "M3")
         {
             Prefix = prefix;
             GroupName = groupName;
-            Students = new List<Student>();
+            _students = new List<Student>();
             MaximumNumberOfStudents = maximumNumberOfStudents;
         }
 
@@ -32,7 +33,7 @@ namespace Isu.Entities
             }
         }
 
-        public List<Student> Students { get; }
+        public IReadOnlyList<Student> Students => _students;
         public int MaximumNumberOfStudents { get; }
         public string Prefix { get; }
 
@@ -40,13 +41,18 @@ namespace Isu.Entities
         {
             if (MaximumNumberOfStudents == Students.Count)
                 throw new IsuException("Group is full, student cannot be added");
-            Students.Add(student);
+            _students.Add(student);
             return Students.Last();
+        }
+
+        public void RemoveStudent(Guid studentId)
+        {
+            _students.Remove(GetStudent(studentId));
         }
 
         public void TransferStudent(Student student, Group oldGroup)
         {
-            oldGroup.Students.Remove(student);
+            oldGroup.RemoveStudent(student.Id);
             AddStudent(new Student(student.Id, student.Name, GroupName));
         }
 
