@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using IsuExtra.Tools;
 
@@ -6,26 +7,38 @@ namespace IsuExtra.Entities
 {
     public class Schedule
     {
-        private readonly List<Pair> _pairs;
-        public Schedule(List<Pair> pairs = null)
+        private readonly List<Lesson> _lessons;
+        public Schedule(List<Lesson> pairs = null)
         {
-            _pairs = pairs ?? new List<Pair>();
+            _lessons = pairs ?? new List<Lesson>();
         }
 
-        public IReadOnlyList<Pair> Pairs => _pairs;
+        public IReadOnlyList<Lesson> Lessons => _lessons;
 
-        public void AddPair(Pair pair)
+        public void AddLesson(Lesson lesson)
         {
-            if (_pairs.FirstOrDefault(pair1 => pair1.DayOfWeek == pair.DayOfWeek && pair1.Time == pair.Time) is not null)
-                throw new IsuExtraException("Something was wrong");
-            _pairs.Add(pair);
+            if (_lessons.FirstOrDefault(lesson1 => lesson1.DayOfWeek == lesson.DayOfWeek && lesson.CompareLesson(lesson1))
+                is not null)
+            {
+                throw new IsuExtraException("Lesson overlap");
+            }
+
+            _lessons.Add(lesson);
         }
 
-        public void RemovePair(Pair pair)
+        public void RemoveLesson(Lesson lesson)
         {
-            if (!_pairs.Contains(pair))
-                throw new IsuExtraException("Pair doesn't exist");
-            _pairs.Remove(pair);
+            if (!_lessons.Contains(lesson))
+            {
+                throw new IsuExtraException("Lesson is doesn't exist");
+            }
+
+            _lessons.Remove(lesson);
+        }
+
+        public bool InvarianceIntersectionCheck(List<Lesson> lessons)
+        {
+            return _lessons.All(lesson => lessons.FirstOrDefault(lesson1 => lesson1.CompareLesson(lesson)) is null);
         }
     }
 }

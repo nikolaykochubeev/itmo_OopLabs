@@ -1,26 +1,14 @@
-﻿using System;
-
-namespace IsuExtra.Entities
+﻿namespace IsuExtra.Entities
 {
     public class MegaFaculty
     {
-        public MegaFaculty(Guid id, string name, string prefix)
+        public MegaFaculty(string prefix, string name)
         {
-            Id = id;
-            Name = name;
             Prefix = prefix;
+            Name = name;
         }
 
-        public Guid Id { get; }
-        public string Name { get; }
-
-        // public OgnpCourse OgnpCourse { get; private set; }
         public string Prefix { get; }
-
-        // public OgnpCourse AddOgnpCourse(string name)
-        // {
-        //     OgnpCourse = new OgnpCourse(Id, name, Prefix);
-        //     return OgnpCourse;
-        // }
+        public string Name { get; }
     }
 }
