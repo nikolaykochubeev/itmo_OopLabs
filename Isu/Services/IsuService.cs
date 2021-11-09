@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Isu.Entities;
+using Isu.Tools;
 
 namespace Isu.Services
 {
     public class IsuService : IIsuService
     {
+        private const int MinCourse = 1;
+        private const int MaxCourse = 4;
+        private const int MinGroup = 0;
+        private const int MaxGroup = 99;
         private readonly Dictionary<string, Group> _groups = new ();
 
         public IsuService(int maximumNumberOfStudents)
@@ -18,6 +23,9 @@ namespace Isu.Services
 
         public Group AddGroup(string name)
         {
+            if (!(name.StartsWith("M3") && name[2] - '0' <= MaxCourse && name[2] - '0' >= MinCourse &&
+                  (name[3] + name[4] - '0' is >= MinGroup and <= MaxGroup) && name.Length == 5))
+                throw new IsuException("Invalid group number");
             _groups[name] = new Group(name, MaximumNumberOfStudents);
             return _groups[name];
         }
@@ -39,7 +47,7 @@ namespace Isu.Services
             return _groups.Values.SelectMany(@group => @group.Students.Where(student => student.Name == name)).FirstOrDefault();
         }
 
-        public List<Student> FindStudents(string groupName)
+        public IReadOnlyList<Student> FindStudents(string groupName)
         {
             return _groups.ContainsKey(groupName) ? _groups[groupName].Students : new List<Student>();
         }
