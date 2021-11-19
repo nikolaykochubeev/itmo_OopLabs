@@ -1,6 +1,5 @@
-using System.IO;
+using System;
 using System.Linq;
-using Backups.Tools;
 
 namespace Backups.Entities
 {
@@ -8,13 +7,12 @@ namespace Backups.Entities
     {
         public JobObject(string path)
         {
-            if (!File.Exists(path))
-                throw new BackupsException($"File {path} doesn't exists");
             Path = path;
+            Id = Guid.NewGuid();
         }
 
-        public string Name { get; }
         public string Path { get; }
+        public Guid Id { get; }
 
         public override string ToString()
         {
@@ -23,7 +21,7 @@ namespace Backups.Entities
 
         protected bool Equals(JobObject other)
         {
-            return Path == other.Path;
+            return Id == other.Id;
         }
     }
 }

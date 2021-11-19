@@ -8,47 +8,45 @@ namespace Backups.Services
 {
     public class BackupJob
     {
-        private readonly List<JobObject> _jobObjects;
+        private readonly List<JobObject> _jobObjects = new ();
 
         private readonly List<RestorePoint> _restorePoints = new ();
 
         private string _directoryPath;
-        private IArchiver _archiverType;
+        private IArchiver _archiver;
         private IRepository _repositoryType;
 
-        public BackupJob(IRepository repositoryType, IArchiver archiverType, List<JobObject> jobObjects,  string directoryPath = "C:\\Users\\nikol\\RiderProjects\\nikolaykochubeev\\Backups.Tests\\Directory")
+        public BackupJob(IRepository repositoryType, IArchiver archiver, IEnumerable<JobObject> jobObjects, string directoryPath)
         {
             Id = Guid.NewGuid();
-            _archiverType = archiverType;
-            _jobObjects = jobObjects;
+            _archiver = archiver;
+            _jobObjects.AddRange(jobObjects);
             _directoryPath = directoryPath;
             _repositoryType = repositoryType;
         }
 
+        public IReadOnlyList<RestorePoint> RestorePoints => _restorePoints;
         public Guid Id { get; }
 
-        public RestorePoint CreateRestorePoint(DateTime dateTime)
+        public void CreateRestorePoint()
         {
-            IRepository repository = _repositoryType;
-            repository.AddStorages(_directoryPath, _archiverType, _jobObjects.ToArray());
-            var restorePoint = new RestorePoint(_restorePoints.Count, repository, DateTime.Now);
-            _restorePoints.Add(restorePoint);
-            return restorePoint;
+            List<Storage> storages = _archiver.Run(_directoryPath, _repositoryType, _jobObjects);
+            _restorePoints.Add(new RestorePoint(_restorePoints.Count, storages, DateTime.Now));
         }
 
-        public JobObject AddJobObject(string filePath)
+        public void AddObjects(IEnumerable<JobObject> jobObjects)
         {
-            JobObject jobObject = _jobObjects.FirstOrDefault(obj => obj.Path == filePath);
-            if (jobObject is not null)
-                return jobObject;
-            jobObject = new JobObject(filePath);
+            _jobObjects.AddRange(jobObjects);
+        }
+
+        public void AddObject(JobObject jobObject)
+        {
             _jobObjects.Add(jobObject);
-            return jobObject;
         }
 
-        public void RemoveJobObject(string filePath)
+        public void RemoveJobObject(Guid jobObjectId)
         {
-            JobObject jobObject = _jobObjects.FirstOrDefault(job => job.Path == filePath);
+            JobObject jobObject = _jobObjects.FirstOrDefault(job => job.Id == jobObjectId);
             if (jobObject is not null)
                 _jobObjects.Remove(jobObject);
         }

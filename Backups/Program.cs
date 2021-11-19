@@ -12,9 +12,10 @@ namespace Backups
         {
             var backupJob = new BackupJob(
                 new RepositoryWithFileSystem(),
-                new SingleStorageArchiver(),
-                new List<JobObject>() { new JobObject("C:\\Users\\nikol\\RiderProjects\\nikolaykochubeev\\Backups\\Program.cs") });
-            backupJob.CreateRestorePoint(DateTime.Now);
+                new SingleStorage(),
+                new List<JobObject>() { new ("C:\\Users\\nikol\\RiderProjects\\nikolaykochubeev\\Backups\\NewFile1.txt") },
+                "C:\\Users\\nikol\\Desktop\\backuptest");
+            backupJob.CreateRestorePoint();
         }
     }
 }

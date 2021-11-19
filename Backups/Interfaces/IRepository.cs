@@ -5,6 +5,6 @@ namespace Backups.Interfaces
 {
     public interface IRepository
     {
-        public List<Storage> AddStorages(string directoryPath, IArchiver archiver, params JobObject[] jobObjects);
+        public void Run(string folderPath, IEnumerable<Storage> storages);
     }
 }

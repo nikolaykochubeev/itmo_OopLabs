@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using Backups.Entities;
-using Backups.Services;
 
 namespace Backups.Interfaces
 {
     public interface IArchiver
     {
-        List<Storage> Store(string directoryPath, params JobObject[] jobObjects);
+        public List<Storage> Run(string directoryPath, IRepository repository, IEnumerable<JobObject> jobObjects);
     }
 }
