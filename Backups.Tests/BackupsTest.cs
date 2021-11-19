@@ -7,23 +7,21 @@ namespace Backups.Tests
 {
     public class BackupsTest
     {
-        private BackupJob _backupJob;
-        [SetUp]
-        public void Setup()
-        {
-            _backupJob = new BackupJob(new RepositoryWithoutFileSystem(),
-                new SingleStorage()
-                ,new List<JobObject>(),
-                "Abstract directory");
-        }
 
         [Test]
-        public void CreatingRestorePointWithRepositoryWithoutFileSystemTest_EverythingWorks()
+        public void SplitStoragesWithRepositoryWithoutFileSystemTest()
         {
-            var jobObject = new JobObject("Abstract file path");
-            _backupJob.AddObject(jobObject);
-            _backupJob.CreateRestorePoint();
-            Assert.AreEqual(jobObject.Id, _backupJob.RestorePoints[0].Storages[0].ArchivedObjects[0].Id);
+            var backupJob = new BackupJob(new RepositoryWithoutFileSystem(), new SplitStoragesArchiver(), new List<JobObject>(),
+                "Abstract directory");
+            var jobObjects = new List<JobObject> { new("File 1"), new ("File 2") };
+            backupJob.AddObjects(jobObjects);
+            backupJob.CreateRestorePoint();
+            backupJob.RemoveJobObject(jobObjects[0].Id);
+            backupJob.CreateRestorePoint();
+            
+            Assert.AreEqual(backupJob.RestorePoints.Count, 2);
+            Assert.AreEqual(backupJob.RestorePoints[0].Storages.Count, 2);
+            Assert.AreEqual(backupJob.RestorePoints[1].Storages.Count, 1);
         }
     }
 }

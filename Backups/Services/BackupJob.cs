@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Backups.Entities;
 using Backups.Interfaces;
+using Backups.Tools;
 
 namespace Backups.Services
 {
     public class BackupJob
     {
-        private readonly List<JobObject> _jobObjects = new ();
+        private readonly List<JobObject> _jobObjects;
 
         private readonly List<RestorePoint> _restorePoints = new ();
 
@@ -19,10 +20,13 @@ namespace Backups.Services
         public BackupJob(IRepository repositoryType, IArchiver archiver, IEnumerable<JobObject> jobObjects, string directoryPath)
         {
             Id = Guid.NewGuid();
-            _archiver = archiver;
-            _jobObjects.AddRange(jobObjects);
+
+            _repositoryType = repositoryType ?? throw new BackupsException("Any of the constructor arguments are null");
+            _archiver = archiver ?? throw new BackupsException("Any of the constructor arguments are null");
+            _jobObjects = jobObjects.ToList();
+            if (directoryPath == string.Empty)
+                throw new BackupsException("String cannot be empty");
             _directoryPath = directoryPath;
-            _repositoryType = repositoryType;
         }
 
         public IReadOnlyList<RestorePoint> RestorePoints => _restorePoints;
@@ -36,11 +40,16 @@ namespace Backups.Services
 
         public void AddObjects(IEnumerable<JobObject> jobObjects)
         {
-            _jobObjects.AddRange(jobObjects);
+            foreach (JobObject jobObject in jobObjects)
+            {
+                AddObject(jobObject);
+            }
         }
 
         public void AddObject(JobObject jobObject)
         {
+            if (_jobObjects.FirstOrDefault(job => job.Id == jobObject.Id) is not null)
+                return;
             _jobObjects.Add(jobObject);
         }
 

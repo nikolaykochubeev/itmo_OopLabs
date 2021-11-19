@@ -5,7 +5,7 @@ namespace Backups.Entities
 {
     public class RepositoryWithoutFileSystem : IRepository
     {
-        public void Run(string folderPath, IEnumerable<Storage> storages)
+        public void Store(string folderPath, IEnumerable<Storage> storages)
         {
         }
     }

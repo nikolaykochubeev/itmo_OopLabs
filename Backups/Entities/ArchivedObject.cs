@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 
 namespace Backups.Entities
@@ -8,24 +9,20 @@ namespace Backups.Entities
         public ArchivedObject(JobObject jobObject)
         {
             Id = jobObject.Id;
-            Path = jobObject.Path;
+            FilePath = jobObject.FilePath;
         }
 
         public Guid Id { get; }
-        public string Path { get; }
+        public string FilePath { get; }
+
         public override string ToString()
         {
-            return Path.Split("\\").Last();
-        }
-
-        protected bool Equals(JobObject other)
-        {
-            return Path == other.Path;
+            return Path.GetFileName(FilePath);
         }
 
         protected bool Equals(ArchivedObject other)
         {
-            return Path == other.Path;
+            return FilePath == other.FilePath;
         }
     }
 }
