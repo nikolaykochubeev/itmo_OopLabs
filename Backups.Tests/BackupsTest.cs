@@ -9,7 +9,7 @@ namespace Backups.Tests
     {
 
         [Test]
-        public void SplitStoragesWithRepositoryWithoutFileSystemTest()
+        public void SplitStoragesWithRepositoryWithoutFileSystemTest()  
         {
             var backupJob = new BackupJob(new RepositoryWithoutFileSystem(), new SplitStoragesArchiver(), new List<JobObject>(),
                 "Abstract directory");
