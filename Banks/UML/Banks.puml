@@ -1,0 +1,78 @@
+﻿@startuml
+'https://plantuml.com/class-diagram
+
+'skinparam monochrome reverse
+
+hide empty members
+
+package Services
+{
+    interface ICentralBank
+    {
+        - IAccountType _accountType
+                + void TopUp(decimal amountOfMoney)
+                + void Withdraw(decimal amountOfMoney)
+    }
+    
+    class CentralBank()
+    {
+        - List<Bank> _banks
+        - TimeRewindMechanism TimeRewindMechanism
+        + IReadOnlyList<Bank> Banks { get; }
+        + Bank AddBank(string name, List<Client> clients) 
+        + Bank GetBank(Guid bankId)
+    }
+    class ClientService()
+    {
+        + IReadOnlyList<Client> Clients { get; }
+        + Client AddClient(string name, PassportId passportId, BankAccount bankAccount)
+        + Client GetClient(Guid clientId)                        
+    }
+}
+package Entities
+{
+    class Bank
+    {
+        -  List<Client> _clients
+
+    
+    }
+    class Client
+    {
+        + string Name { get; }
+        + PassportId PassportId { get; }
+        + string Address { get; }        
+    }
+
+    
+    class BankAccount
+    {
+        - IAccountType _accountType
+        + void TopUp(decimal amountOfMoney)
+        + void Withdraw(decimal amountOfMoney)
+    }
+    
+    class DebitAccount
+    {
+        + Something to check doubtful or doubtfulness
+    }
+        
+    class DepositAccount
+    {
+        + Something to check doubtful or doubtfulness
+    }
+    
+    class CreditAccount
+    {
+        + Something to check doubtful or doubtfulness
+    }
+    
+    interface IAccountType 
+    {
+        + Something to check doubtful or doubtfulness
+    }
+    IAccountType <-- CreditAccount
+}
+
+
+@enduml
