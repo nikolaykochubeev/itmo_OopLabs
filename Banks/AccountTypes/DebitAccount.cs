@@ -13,7 +13,6 @@ namespace Banks.AccountTypes
             ClientId = clientId;
             AnnualPercentage = annualPercentage;
             Id = Guid.NewGuid();
-            AmountOfMoney = default;
         }
 
         public Guid Id { get; }
@@ -45,6 +44,16 @@ namespace Banks.AccountTypes
             AmountOfMoney += days * AnnualPercentage / NumberOfDaysInYear;
             TotalNumberOfDays += days;
             return this;
+        }
+
+        Guid IBankAccount.Id()
+        {
+            return Id;
+        }
+
+        Guid IBankAccount.ClientId()
+        {
+            return ClientId;
         }
     }
 }

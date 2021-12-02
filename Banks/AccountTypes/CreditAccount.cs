@@ -6,12 +6,12 @@ namespace Banks.AccountTypes
     public class CreditAccount : IBankAccount
     {
         private const uint NumberOfDaysInYear = 365;
+
         public CreditAccount(Guid clientId, decimal annualPercentage)
         {
             ClientId = clientId;
             AnnualPercentage = annualPercentage;
             Id = Guid.NewGuid();
-            AmountOfMoney = default;
         }
 
         public Guid Id { get; }
@@ -41,6 +41,16 @@ namespace Banks.AccountTypes
 
             TotalNumberOfDays += days;
             return this;
+        }
+
+        Guid IBankAccount.Id()
+        {
+            return Id;
+        }
+
+        Guid IBankAccount.ClientId()
+        {
+            return ClientId;
         }
     }
 }

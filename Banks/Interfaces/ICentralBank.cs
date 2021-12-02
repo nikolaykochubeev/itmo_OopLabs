@@ -6,8 +6,7 @@ namespace Banks.Interfaces
     public interface ICentralBank
     {
         Guid CreateBankAccount(Client client);
-        decimal GetAmountOfMoneyOnBankAccount(Guid bankAccountId);
-        Guid CreateTransaction(ITransaction transactionType, decimal amountOfMoney, params Guid[] bankAccounts);
-        void CancelTransaction(Guid transactionId);
+        Guid CreateTransaction(ITransaction transactionType, decimal amountOfMoney, params Guid[] bankAccountsId);
+        Guid CancelTransaction(Guid transactionId);
     }
 }

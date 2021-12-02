@@ -1,4 +1,5 @@
-﻿using Banks.Entities;
+﻿using System;
+using Banks.Entities;
 
 namespace Banks.Interfaces
 {
@@ -7,5 +8,7 @@ namespace Banks.Interfaces
         IBankAccount TopUp(decimal amountOfMoney);
         IBankAccount Withdraw(decimal amountOfMoney);
         IBankAccount WasteTime(uint days);
+        Guid Id();
+        Guid ClientId();
     }
 }

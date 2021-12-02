@@ -1,38 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Banks.Entities;
 using Banks.Interfaces;
+using Banks.Tools;
 
 namespace Banks.Entities
 {
     public class Bank : ICentralBank
     {
-        private List<IBankAccount> _bankAccounts = new ();
-
-        public Bank()
+        private readonly List<Client> _clients = new ();
+        private readonly List<IBankAccount> _bankAccounts = new ();
+        private readonly List<ITransaction> _transactions = new ();
+        public Bank(BankSettings bankSettings)
         {
             throw new NotImplementedException();
         }
+
+        public IReadOnlyList<Client> Clients => _clients;
+        public IReadOnlyList<IBankAccount> BankAccounts => _bankAccounts;
 
         public Guid CreateBankAccount(Client client)
         {
             throw new NotImplementedException();
         }
 
-        public decimal GetAmountOfMoneyOnBankAccount(Guid bankAccountId)
+        public Guid CreateTransaction(ITransaction transactionType, decimal amountOfMoney, params Guid[] bankAccountsId)
         {
-            throw new NotImplementedException();
+            List<IBankAccount> bankAccounts = GetBankAccounts(bankAccountsId.ToList());
+
+            ITransaction transaction = transactionType.Create(amountOfMoney, bankAccounts);
+            _transactions.Add(transaction);
+            return transaction.GetId();
         }
 
-        public Guid CreateTransaction(ITransaction transactionType, decimal amountOfMoney, params Guid[] bankAccounts)
+        public Guid CancelTransaction(Guid transactionId)
         {
-            throw new NotImplementedException();
-        }
+            ITransaction transaction = _transactions.FirstOrDefault(transaction => transaction.GetId() == transactionId);
 
-        public void CancelTransaction(Guid transactionId)
-        {
-            throw new NotImplementedException();
+            if (transaction is null)
+            {
+                throw new BanksException("Transaction doesnt exists");
+            }
+
+            _transactions.Remove(transaction);
+            transaction = transaction.Cancel(CentralBank.GetBankAccounts(transaction.GetBankAccountsId()).ToList());
+            _transactions.Add(transaction);
+            return transaction.GetId();
         }
 
         public void WasteTimeMechanism(uint days)
@@ -41,6 +56,19 @@ namespace Banks.Entities
             {
                 bankAccount.WasteTime(days);
             }
+        }
+
+        private List<IBankAccount> GetBankAccounts(List<Guid> bankAccountsId)
+        {
+            List<IBankAccount> bankAccounts = new ();
+            foreach (Guid bankAccountId in bankAccountsId)
+            {
+                IBankAccount bankAccount = _bankAccounts.FirstOrDefault(account => bankAccountId == account.ClientId());
+                bankAccount ??= CentralBank.GetBankAccount(bankAccountId) ?? throw new BanksException("BankAccount doesn't exists");
+                bankAccounts.Add(bankAccount);
+            }
+
+            return bankAccounts;
         }
     }
 }
