@@ -37,7 +37,7 @@ namespace Banks.Entities
             return client;
         }
 
-        public Client UpdateClientPassport(Guid clientId, ulong passport)
+        public Client UpdateClientPassport(Guid clientId, string passport)
         {
             Client client = _clients.FirstOrDefault(client => client.Id == clientId);
             if (client is null)
@@ -200,7 +200,7 @@ namespace Banks.Entities
         private void UpdateSuspend(Guid clientId)
         {
             Client client = CentralBank.GetClient(clientId);
-            client.UpdateClientSuspend((client.Passport == 0 && BankSettings.PassportNeeded) || (client.Address is null && BankSettings.AddressNeeded));
+            client.UpdateClientSuspend((client.Passport is null && BankSettings.PassportNeeded) || (client.Address is null && BankSettings.AddressNeeded));
         }
     }
 }

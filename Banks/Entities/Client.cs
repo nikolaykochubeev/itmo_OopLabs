@@ -16,11 +16,11 @@ namespace Banks.Entities
         public Guid Id { get; }
         public string FirstName { get; }
         public string LastName { get; }
-        public ulong Passport { get;  private set; }
+        public string Passport { get;  private set; }
         public string Address { get;  private set; }
         public bool IsSuspend { get; private set; } = true;
         public List<Notification> Notifications { get; private set; }
-        public void UpdateClientPassport(ulong passport)
+        public void UpdateClientPassport(string passport)
         {
             Passport = passport;
         }
