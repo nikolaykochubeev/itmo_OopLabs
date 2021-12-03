@@ -23,8 +23,6 @@ namespace Banks.TransactionTypes
             }
 
             _amountOfMoney = amountOfMoney;
-            Console.WriteLine(bankAccounts[0].AmountOfMoney());
-            Console.WriteLine(bankAccounts[1].AmountOfMoney());
             bankAccounts[WithdrawalAccount].Withdraw(amountOfMoney);
             bankAccounts[TopUpAccount].TopUp(amountOfMoney);
 
