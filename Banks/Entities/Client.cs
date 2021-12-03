@@ -1,50 +1,43 @@
 ﻿using System;
+using System.Collections.Generic;
 using Banks.Tools;
 
 namespace Banks.Entities
 {
     public class Client
     {
-        public Client(string firstName, string lastName, ulong passport = default, string address = default, Guid id = default)
+        public Client(string firstName, string lastName, Guid id = default)
         {
             Id = id == Guid.Empty ? Guid.NewGuid() : id;
             FirstName = firstName ?? throw new BanksException("Client must have a firstname");
             LastName = lastName ?? throw new BanksException("Client must have a lastname");
-
-            // TODO: Validator for the passport???
-            Passport = passport;
-            Address = address;
         }
 
         public Guid Id { get; }
         public string FirstName { get; }
         public string LastName { get; }
-        public ulong Passport { get; }
-        public string Address { get; }
-
-        public Client UpdateClientFirstName(Client client, string firstName)
+        public ulong Passport { get;  private set; }
+        public string Address { get;  private set; }
+        public bool IsSuspend { get; private set; } = true;
+        public List<Notification> Notifications { get; private set; }
+        public void UpdateClientPassport(ulong passport)
         {
-            return UpdateClient(firstName, LastName, Passport, Address, Id);
+            Passport = passport;
         }
 
-        public Client UpdateClientLastName(Client client, string lastName)
+        public void UpdateClientAddress(string address)
         {
-            return UpdateClient(FirstName, lastName, Passport, Address, Id);
+            Address = address;
         }
 
-        public Client UpdateClientPassport(Client client, ulong passport)
+        public void AddNotification(Notification notification)
         {
-            return UpdateClient(FirstName, LastName, passport, Address, Id);
+            Notifications.Add(notification);
         }
 
-        public Client UpdateClientAddress(string address)
+        public void UpdateClientSuspend(bool isSuspend)
         {
-            return UpdateClient(FirstName, LastName, Passport, address, Id);
-        }
-
-        private Client UpdateClient(string firstName, string lastName, ulong passport, string address, Guid id)
-        {
-            return new Client(firstName, lastName, passport, address, id);
+            IsSuspend = isSuspend;
         }
     }
 }

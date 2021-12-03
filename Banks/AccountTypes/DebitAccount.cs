@@ -29,7 +29,7 @@ namespace Banks.AccountTypes
 
         public IBankAccount Withdraw(decimal amountOfMoney)
         {
-            if (AmountOfMoney - amountOfMoney < 0)
+            if ((AmountOfMoney - amountOfMoney) < 0)
             {
                 throw new BanksException("On a debit account you cannot go to a negative value");
             }
@@ -54,6 +54,11 @@ namespace Banks.AccountTypes
         Guid IBankAccount.ClientId()
         {
             return ClientId;
+        }
+
+        decimal IBankAccount.AmountOfMoney()
+        {
+            return AmountOfMoney;
         }
     }
 }

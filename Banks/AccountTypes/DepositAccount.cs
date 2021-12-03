@@ -9,12 +9,12 @@ namespace Banks.AccountTypes
     public class DepositAccount : IBankAccount
     {
         private const uint NumberOfDaysInYear = 365;
-        private const int ConstWhenTermEnds = 0;
-        private List<DepositRange> _depositRanges;
-        public DepositAccount(Guid clientId, uint term, List<DepositRange> depositRanges)
+        private List<DepositPercentageRange> _depositRanges;
+        private decimal _moneyBuffer;
+        public DepositAccount(Guid clientId, uint accountExpirationDate, List<DepositPercentageRange> depositRanges)
         {
             ClientId = clientId;
-            Term = (int)term;
+            TotalNumberOfDays = (int)accountExpirationDate;
             Id = Guid.NewGuid();
             _depositRanges = depositRanges;
         }
@@ -23,9 +23,8 @@ namespace Banks.AccountTypes
         public decimal AnnualPercentage { get; private set; }
         public Guid ClientId { get; }
         public decimal AmountOfMoney { get; private set; }
-        public int Term { get; private set; }
-        public uint TotalNumberOfDays { get; private set; }
-
+        public int TotalNumberOfDays { get; private set; }
+        public uint AccountTerm { get; private set; }
         public IBankAccount TopUp(decimal amountOfMoney)
         {
             AmountOfMoney += amountOfMoney;
@@ -35,7 +34,7 @@ namespace Banks.AccountTypes
 
         public IBankAccount Withdraw(decimal amountOfMoney)
         {
-            if (Term != 0)
+            if (TotalNumberOfDays < AccountTerm)
                 throw new BanksException("Sorry, term days of this debit account is not over");
             AmountOfMoney -= amountOfMoney;
             UpdatePercentage();
@@ -44,9 +43,20 @@ namespace Banks.AccountTypes
 
         public IBankAccount WasteTime(uint days)
         {
-            Term = (int)(Term - days < ConstWhenTermEnds ? ConstWhenTermEnds : Term - days);
-            AmountOfMoney += days * AnnualPercentage / NumberOfDaysInYear;
-            TotalNumberOfDays += days;
+            while (days > 0)
+            {
+                if (TotalNumberOfDays < AccountTerm)
+                    _moneyBuffer += AmountOfMoney * (AnnualPercentage / NumberOfDaysInYear);
+                TotalNumberOfDays++;
+                if (TotalNumberOfDays % 30 == 0)
+                {
+                    AmountOfMoney += _moneyBuffer;
+                    _moneyBuffer = 0;
+                }
+
+                days--;
+            }
+
             UpdatePercentage();
             return this;
         }
@@ -61,11 +71,15 @@ namespace Banks.AccountTypes
             return ClientId;
         }
 
+        decimal IBankAccount.AmountOfMoney()
+        {
+            return AmountOfMoney;
+        }
+
         private void UpdatePercentage()
         {
-            DepositRange depositRange = _depositRanges.FirstOrDefault(range => range.From <= AmountOfMoney && range.Before >= AmountOfMoney);
-
-            AnnualPercentage = depositRange.AnnualPercentage;
+            DepositPercentageRange depositPercentageRange = _depositRanges.FirstOrDefault(range => range.From <= AmountOfMoney && range.Before >= AmountOfMoney);
+            AnnualPercentage = depositPercentageRange.AnnualPercentage;
         }
     }
 }

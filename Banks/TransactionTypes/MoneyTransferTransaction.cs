@@ -8,8 +8,8 @@ namespace Banks.TransactionTypes
 {
     public class MoneyTransferTransaction : ITransaction
     {
-        private const int FirstBankAccount = 0;
-        private const int SecondBankAccount = 1;
+        private const int WithdrawalAccount = 0;
+        private const int TopUpAccount = 1;
         private decimal _amountOfMoney;
         private List<Guid> _bankAccounts;
         public IReadOnlyList<Guid> BankAccounts => _bankAccounts;
@@ -22,10 +22,14 @@ namespace Banks.TransactionTypes
                 throw new BanksException("When transferring between two accounts, there must be two accounts");
             }
 
-            _bankAccounts = bankAccounts.Select(accounts => accounts.Id()).ToList();
             _amountOfMoney = amountOfMoney;
-            bankAccounts[FirstBankAccount].Withdraw(_amountOfMoney);
-            bankAccounts[SecondBankAccount].TopUp(_amountOfMoney);
+            Console.WriteLine(bankAccounts[0].AmountOfMoney());
+            Console.WriteLine(bankAccounts[1].AmountOfMoney());
+            bankAccounts[WithdrawalAccount].Withdraw(amountOfMoney);
+            bankAccounts[TopUpAccount].TopUp(amountOfMoney);
+
+            _bankAccounts = bankAccounts.Select(accounts => accounts.Id()).ToList();
+
             return this;
         }
 
@@ -41,8 +45,8 @@ namespace Banks.TransactionTypes
                 throw new BanksException("When transferring between two accounts, there must be two accounts");
             }
 
-            bankAccounts[FirstBankAccount].TopUp(_amountOfMoney);
-            bankAccounts[SecondBankAccount].Withdraw(_amountOfMoney);
+            bankAccounts[WithdrawalAccount].TopUp(_amountOfMoney);
+            bankAccounts[TopUpAccount].Withdraw(_amountOfMoney);
             IsCanceled = true;
             return this;
         }

@@ -16,7 +16,11 @@ namespace Banks.TransactionTypes
         {
             _bankAccounts = bankAccounts.Select(accounts => accounts.Id()).ToList();
             _amountOfMoney = amountOfMoney;
-            bankAccounts.Select(account => account.Withdraw(amountOfMoney));
+            foreach (IBankAccount account in bankAccounts)
+            {
+                account.Withdraw(_amountOfMoney);
+            }
+
             return this;
         }
 
@@ -27,7 +31,11 @@ namespace Banks.TransactionTypes
                 throw new BanksException("Transaction already canceled");
             }
 
-            bankAccounts.Select(account => account.TopUp(_amountOfMoney));
+            foreach (IBankAccount account in bankAccounts)
+            {
+                account.TopUp(_amountOfMoney);
+            }
+
             IsCanceled = true;
             return this;
         }

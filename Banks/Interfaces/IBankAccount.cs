@@ -10,5 +10,6 @@ namespace Banks.Interfaces
         IBankAccount WasteTime(uint days);
         Guid Id();
         Guid ClientId();
+        decimal AmountOfMoney();
     }
 }

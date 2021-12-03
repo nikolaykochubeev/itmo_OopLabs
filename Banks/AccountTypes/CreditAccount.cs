@@ -1,5 +1,6 @@
 ﻿using System;
 using Banks.Interfaces;
+using Banks.Tools;
 
 namespace Banks.AccountTypes
 {
@@ -7,19 +8,19 @@ namespace Banks.AccountTypes
     {
         private const uint NumberOfDaysInYear = 365;
 
-        public CreditAccount(Guid clientId, decimal annualPercentage)
+        public CreditAccount(Guid clientId, decimal annualPercentage, decimal creditLimit)
         {
             ClientId = clientId;
             AnnualPercentage = annualPercentage;
-            Id = Guid.NewGuid();
+            CreditLimit = creditLimit;
         }
 
-        public Guid Id { get; }
+        public Guid Id { get; } = Guid.NewGuid();
         public decimal AnnualPercentage { get; }
         public Guid ClientId { get; }
         public decimal AmountOfMoney { get; private set; }
         public uint TotalNumberOfDays { get; private set; }
-
+        public decimal CreditLimit { get; private set; }
         public IBankAccount TopUp(decimal amountOfMoney)
         {
             AmountOfMoney += amountOfMoney;
@@ -28,6 +29,8 @@ namespace Banks.AccountTypes
 
         public IBankAccount Withdraw(decimal amountOfMoney)
         {
+            if (AmountOfMoney < CreditLimit)
+                throw new BanksException("Credit limit exceeded");
             AmountOfMoney -= amountOfMoney;
             return this;
         }
@@ -51,6 +54,11 @@ namespace Banks.AccountTypes
         Guid IBankAccount.ClientId()
         {
             return ClientId;
+        }
+
+        decimal IBankAccount.AmountOfMoney()
+        {
+            return AmountOfMoney;
         }
     }
 }
