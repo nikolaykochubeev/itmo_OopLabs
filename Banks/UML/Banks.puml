@@ -1,0 +1,104 @@
+﻿@startuml
+'https://plantuml.com/class-diagram
+
+'skinparam monochrome reverse
+
+hide empty members
+
+package Entities
+{
+    class CentralBank
+    {
+        - TimeRewindMechanism TimeRewindMechanism(datetime)
+        - List<Bank> _banks
+        - List<BankAccount> _bankAccounts
+        + ClientService ClientService
+        + IReadOnlyList<BankAccount> BankAccounts { get; }
+        + IReadOnlyList<Bank> Banks { get; }
+        + Bank AddBank(string name, params Client) 
+        + Bank GetBank(Guid bankId)
+    }
+    
+    class Bank
+    {
+        -List<Client> _clients
+        -List<BankAccount> _bankAccounts
+        +IReadOnlyList<Client> Clients
+        +IReadOnlyList<BankAccount> BankAccounts 
+        +Guid CreateTransaction(ITransaction transaction)
+        +void Cancel(Guid transactionId)    
+    }
+    
+    class BankSettings
+    {
+     +it will be in bank construcotr
+    }
+    
+    class Client
+    {
+        + string Name { get; }
+        + PassportId PassportId { get; }
+        + string Address { get; }       
+        + IsApprove 
+    }
+}
+
+package AccountTypes
+{
+    class DebitAccount
+    {
+        + Something to check doubtful or doubtfulness
+    }
+        
+    class DepositAccount
+    {
+        + Something to check doubtful or doubtfulness
+        we can withdraw money if it unlock
+    }
+    
+    class CreditAccount
+    {
+        + Something to check doubtful or doubtfulness
+    }
+}
+
+package TransactionTypes
+{
+    class WithdrawalTransaction
+    {
+    
+    }
+    
+    class MoneyTransferTransaction
+    {
+        tyt budet u realiizathia c bankavmi
+    }
+    
+    class TopUpTransaction
+    {
+       
+    }
+}
+
+package Interfaces
+{
+    interface ICentralBank
+    {
+        +Guid CreateTransaction(transaction will be only in bank)
+        +void CancelTransaction(Guid transactionId)
+    }
+    interface IAccountType 
+    {
+        + Something to check doubtful or doubtfulness
+    }
+    
+    interface ITransaction()
+    {
+        +List<BankAccount> Create(decimal amountOfMoney, params BankAccount)
+        +List<BankAccount> Cancel()
+    }
+    
+    IAccountType <-- CreditAccount
+}
+
+@enduml
