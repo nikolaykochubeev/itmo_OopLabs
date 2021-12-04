@@ -16,7 +16,7 @@ namespace Banks
             {
                 try
                 {
-                    Console.WriteLine("\n" + "AddBank, AddClientToBank, AddBankAccount, CreateTransaction, CancelTransaction, Get client info" + "\n");
+                    Console.WriteLine("\n" + "AddBank, AddClientToBank, AddBankAccount, CreateTransaction, CancelTransaction, GetClientInfo, StartWasteTime" + "\n");
                     string command = Console.ReadLine();
                     switch (command)
                     {
@@ -177,18 +177,24 @@ namespace Banks
                             if (bank is null)
                                 throw new BanksException("bank does not exists" + "\n");
                             bank.CancelTransaction(transactionId);
-                            Console.WriteLine("Transaction was successfylly canceled" + "\n");
+                            Console.WriteLine("Transaction was successfully canceled" + "\n");
                             break;
 
                         default:
                             Console.WriteLine("Unknown command " + "\n");
                             break;
 
-                        case "Get client info":
+                        case "GetClientInfo":
                             Console.WriteLine("Enter client id" + "\n");
                             clientId = Guid.Parse(Console.ReadLine());
                             client = CentralBank.GetClient(clientId);
                             Console.WriteLine(client.ToString());
+                            break;
+                        case "StartWasteTime":
+                            Console.WriteLine("Enter the number of days" + "\n");
+                            uint days = Convert.ToUInt32(Console.ReadLine());
+                            CentralBank.StartWasteTime(days);
+                            Console.WriteLine("Waste Time successfully completed" + "\n");
                             break;
                     }
                 }
