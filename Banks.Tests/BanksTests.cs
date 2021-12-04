@@ -41,7 +41,6 @@ namespace Banks.Tests
             Guid transaction = bank.TransferTransaction(bankAccountGuid, bankAccountGuid1, 200);
 
             bank.CancelTransaction(transaction);
-            Console.WriteLine(client.IsSuspend);
         }
     }
 }

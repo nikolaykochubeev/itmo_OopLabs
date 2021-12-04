@@ -2,12 +2,10 @@
 
 namespace Banks.AccountTypes
 {
-    public abstract class DepositPercentageRange
+    public class DepositPercentageRange
     {
-        protected DepositPercentageRange(decimal from, decimal before, decimal annualPercentage)
+        public DepositPercentageRange(decimal from, decimal before, decimal annualPercentage)
         {
-            if (Before - From <= 0)
-                throw new BanksException("Invalid 'from' and 'before'");
             From = from;
             Before = before;
             AnnualPercentage = annualPercentage;

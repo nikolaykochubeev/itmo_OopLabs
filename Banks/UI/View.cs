@@ -2,6 +2,7 @@
 using Banks.Entities;
 using Spectre.Console;
 
+// Здесь должен был быть нормальный UI...
 namespace Banks.UI
 {
     public class View
