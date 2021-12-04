@@ -13,7 +13,7 @@ namespace Banks.Tests
         {
             Bank bank = CentralBank.AddBank(
                 "1235",
-                new BankSettings(new List<DepositPercentageRange>(), true, true, 1000, 2, 10, 1000, 123));
+                new BankSettings(new List<DepositPercentageRange>(), 1000, 2, 10, 1000, 123));
 
             Client client = bank.AddClient("name", "name");
             Client client1 = bank.AddClient("123", "123");
@@ -41,6 +41,7 @@ namespace Banks.Tests
             Guid transaction = bank.TransferTransaction(bankAccountGuid, bankAccountGuid1, 200);
 
             bank.CancelTransaction(transaction);
+            Console.WriteLine(client.IsSuspend);
         }
     }
 }

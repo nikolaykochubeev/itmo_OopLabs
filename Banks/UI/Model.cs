@@ -2,6 +2,11 @@
 {
     public class Model
     {
-        // TODO: моделька тыкает классы и выводит стриги для вывода
+        public void Start()
+        {
+            while (true)
+            {
+            }
+        }
     }
 }

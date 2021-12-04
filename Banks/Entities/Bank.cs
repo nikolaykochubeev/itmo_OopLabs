@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Banks.AccountTypes;
-using Banks.Entities;
 using Banks.Interfaces;
 using Banks.Tools;
 using Banks.TransactionTypes;
@@ -29,6 +27,7 @@ namespace Banks.Entities
         public Guid BankId { get; }
         public IReadOnlyList<Client> Clients => _clients;
         public IReadOnlyList<IBankAccount> BankAccounts => _bankAccounts;
+        public IReadOnlyList<ITransaction> Transactions => _transactions;
         public BankSettings BankSettings { get; }
         public Client AddClient(string firstName, string lastName)
         {
@@ -43,7 +42,7 @@ namespace Banks.Entities
             if (client is null)
                 throw new BanksException("Client not found");
             client.UpdateClientPassport(passport);
-            UpdateSuspend(client.Id);
+
             return client;
         }
 
@@ -53,7 +52,7 @@ namespace Banks.Entities
             if (client is null)
                 throw new BanksException("Client not found");
             client.UpdateClientAddress(address);
-            UpdateSuspend(client.Id);
+
             return client;
         }
 
@@ -100,7 +99,7 @@ namespace Banks.Entities
             Client client = _clients.FirstOrDefault(client1 => client1.Id == bankAccount.ClientId());
             if (client is null)
                 throw new BanksException("client not found");
-            UpdateSuspend(client.Id);
+
             if (client.IsSuspend && amountOfMoney > BankSettings.SuspendTransactionLimit)
                 throw new BanksException("suspend transaction limit less than top up money");
             ITransaction transaction = new TopUpTransaction().Create(amountOfMoney, new List<IBankAccount>() { bankAccount });
@@ -116,7 +115,7 @@ namespace Banks.Entities
             Client client = _clients.FirstOrDefault(client1 => client1.Id == bankAccount.ClientId());
             if (client is null)
                 throw new BanksException("client not found");
-            UpdateSuspend(client.Id);
+
             if (client.IsSuspend && amountOfMoney > BankSettings.SuspendTransactionLimit)
                 throw new BanksException("suspend transaction limit less than top up money");
             ITransaction transaction = new WithdrawalTransaction().Create(amountOfMoney, new List<IBankAccount>() { bankAccount });
@@ -136,9 +135,6 @@ namespace Banks.Entities
 
             Client clientWithdrawal = _clients.FirstOrDefault(client1 => client1.Id == bankAccountWithdrawal.ClientId()) ?? throw new BanksException("Withdrawal client not found");
             Client clientTopUp = _clients.FirstOrDefault(client1 => client1.Id == bankAccountTopUp.ClientId()) ?? throw new BanksException("Top Up client not found");
-
-            UpdateSuspend(clientWithdrawal.Id);
-            UpdateSuspend(clientTopUp.Id);
 
             if (clientTopUp.IsSuspend && amountOfMoney > BankSettings.SuspendTransactionLimit)
                 throw new BanksException("suspend transaction limit less than top up money");
@@ -172,18 +168,6 @@ namespace Banks.Entities
             }
         }
 
-        // public List<IBankAccount> GetBankAccounts(List<Guid> bankAccountsId)
-        // {
-        //     List<IBankAccount> bankAccounts = new ();
-        //     foreach (Guid bankAccountId in bankAccountsId)
-        //     {
-        //         IBankAccount bankAccount = _bankAccounts.FirstOrDefault(account => bankAccountId == account.ClientId());
-        //         bankAccount ??= CentralBank.GetBankAccount(bankAccountId) ?? throw new BanksException("BankAccount doesn't exists");
-        //         bankAccounts.Add(bankAccount);
-        //     }
-        //
-        //     return bankAccounts;
-        // }
         public void CreateNotification(Notification notification)
         {
             foreach (Client client in _clients)
@@ -195,12 +179,6 @@ namespace Banks.Entities
         public IBankAccount GetBankAccount(Guid bankAccountId)
         {
             return _bankAccounts.FirstOrDefault(account => account.Id() == bankAccountId);
-        }
-
-        private void UpdateSuspend(Guid clientId)
-        {
-            Client client = CentralBank.GetClient(clientId);
-            client.UpdateClientSuspend((client.Passport is null && BankSettings.PassportNeeded) || (client.Address is null && BankSettings.AddressNeeded));
         }
     }
 }

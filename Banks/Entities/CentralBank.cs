@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Banks.Interfaces;
-using Banks.Tools;
 
 namespace Banks.Entities
 {
@@ -44,6 +43,12 @@ namespace Banks.Entities
             {
                 bank.WasteTimeMechanism(days);
             }
+        }
+
+        public static Bank GetBankByTransactionId(Guid transactionId)
+        {
+            return _banks.FirstOrDefault(bank =>
+                bank.Transactions.FirstOrDefault(transaction => transaction.GetId() == transactionId) is not null);
         }
     }
 }

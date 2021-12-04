@@ -6,8 +6,13 @@ namespace Banks.UI
 {
     public class View
     {
-        // TODO: Это тыкает юзер
-        // TODO: Обрабатывает пользователя
+        private ViewModel _viewModel;
+
+        public View(ViewModel viewModel)
+        {
+            this._viewModel = viewModel;
+        }
+
         public string InitMainMenu()
         {
             string choice = AnsiConsole.Prompt(
@@ -25,6 +30,33 @@ namespace Banks.UI
                         "Exit"));
             AnsiConsole.Clear();
             return choice;
+        }
+
+        public void AddBankSettings()
+        {
+            // Ask for the user's favorite fruits
+            List<string> settings = AnsiConsole.Prompt(
+                new MultiSelectionPrompt<string>()
+                    .Title("AddBankSettings")
+                    .PageSize(10)
+                    .MoreChoicesText("[grey](Move up and down to reveal settings)[/]")
+                    .InstructionsText(
+                        "[grey](Press [blue]<space>[/] to toggle, " +
+                        "[green]<enter>[/] to accept)[/]")
+                    .AddChoices(new[]
+                    {
+                        "Apple", "Apricot", "Avocado",
+                        "Banana", "Blackcurrant", "Blueberry",
+                        "Cherry", "Cloudberry", "Cocunut",
+                    }));
+
+            foreach (string setting in settings)
+            {
+                AnsiConsole.WriteLine(setting);
+            }
+
+            string s = AnsiConsole.Ask<string>("123");
+            AnsiConsole.WriteLine(s);
         }
     }
 }

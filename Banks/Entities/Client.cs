@@ -16,10 +16,12 @@ namespace Banks.Entities
         public Guid Id { get; }
         public string FirstName { get; }
         public string LastName { get; }
-        public string Passport { get;  private set; }
-        public string Address { get;  private set; }
-        public bool IsSuspend { get; private set; } = true;
+        public string Passport { get; private set; }
+        public string Address { get; private set; }
+        public bool IsSuspend => Passport == null || Address == null;
+
         public List<Notification> Notifications { get; private set; }
+
         public void UpdateClientPassport(string passport)
         {
             Passport = passport;
@@ -35,9 +37,9 @@ namespace Banks.Entities
             Notifications.Add(notification);
         }
 
-        public void UpdateClientSuspend(bool isSuspend)
+        public override string ToString()
         {
-            IsSuspend = isSuspend;
+            return FirstName + LastName + "\n" + "Passport: " + Passport + "\n" + "Client Id: " + "\n" + Address + "\n" + Id + "\n";
         }
     }
 }
