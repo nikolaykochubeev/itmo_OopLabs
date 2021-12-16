@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using Backups.Tools;
 using BackupsExtra.Interfaces;
 
@@ -23,6 +24,26 @@ namespace BackupsExtra.Entities
                     if (!Directory.Exists(storage.ArchivePath))
                         throw new BackupsException($"File {storage.ArchivePath} doesn't exists");
                     zipArchive.CreateEntryFromFile(archivedObject.FilePath, archivedObject.ToString());
+                }
+            }
+        }
+
+        public void Restore(RestorePoint restorePoint)
+        {
+            if (restorePoint is null)
+                throw new BackupsException("restorePoint can not be null");
+            foreach (Storage storage in restorePoint.Storages)
+            {
+                using ZipArchive zipArchive = ZipFile.OpenRead(storage.ArchivePath);
+                foreach (ArchivedObject archivedObject in storage.ArchivedObjects)
+                {
+                    if (File.Exists(archivedObject.FilePath))
+                    {
+                        File.Delete(archivedObject.FilePath);
+                    }
+
+                    zipArchive.Entries.FirstOrDefault(x => x.Name == Path.GetFileName(archivedObject.FilePath))
+                        ?.ExtractToFile(archivedObject.FilePath);
                 }
             }
         }

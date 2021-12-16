@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using BackupsExtra.Entities;
 using BackupsExtra.Interfaces;
@@ -11,12 +13,12 @@ namespace BackupsExtra.Services
     {
         private readonly List<JobObject> _jobObjects;
         private readonly List<RestorePoint> _restorePoints = new ();
-
-        private string _directoryPath;
-        private IArchiver _archiver;
-        private IRepository _repositoryType;
-        private ICleaningPointsAlgorithm _cleaningPointsAlgorithm;
-        public BackupJob(IRepository repositoryType, IArchiver archiver, ICleaningPointsAlgorithm cleaningPointsAlgorithm, IEnumerable<JobObject> jobObjects, string directoryPath)
+        private readonly string _directoryPath;
+        private readonly IArchiver _archiver;
+        private readonly IRepository _repositoryType;
+        private readonly ICleaningPointsAlgorithm _cleaningPointsAlgorithm;
+        private readonly ILogger _logger;
+        public BackupJob(IRepository repositoryType, IArchiver archiver, ICleaningPointsAlgorithm cleaningPointsAlgorithm, IEnumerable<JobObject> jobObjects, string directoryPath, ILogger logger)
         {
             Id = Guid.NewGuid();
             _repositoryType = repositoryType ?? throw new BackupsExtraException("Any of the constructor arguments are null");
@@ -29,6 +31,8 @@ namespace BackupsExtra.Services
             }
 
             _directoryPath = directoryPath;
+            _logger = logger;
+            _logger.Log("BackupJob successfully added", true);
         }
 
         public IReadOnlyList<RestorePoint> RestorePoints => _restorePoints;
@@ -38,15 +42,18 @@ namespace BackupsExtra.Services
         {
             List<Storage> storages = _archiver.Run(_directoryPath, _repositoryType, _jobObjects);
             _restorePoints.Add(new RestorePoint(_restorePoints.Count, storages, DateTime.Now));
+            _logger.Log($"Restore point number {_restorePoints.Count} successfully created", true);
             CleanRestorePoints();
         }
 
-        public void AddObjects(IEnumerable<JobObject> jobObjects)
+        public void AddObjects(List<JobObject> jobObjects)
         {
             foreach (JobObject jobObject in jobObjects)
             {
                 AddObject(jobObject);
             }
+
+            _logger.Log($"{jobObjects.Count()} jobObjects successfully added", true);
         }
 
         public void AddObject(JobObject jobObject)
@@ -57,6 +64,7 @@ namespace BackupsExtra.Services
             }
 
             _jobObjects.Add(jobObject);
+            _logger.Log("jobObject successfully added", true);
         }
 
         public void RemoveJobObject(Guid jobObjectId)
@@ -66,11 +74,26 @@ namespace BackupsExtra.Services
             {
                 _jobObjects.Remove(jobObject);
             }
+
+            _logger.Log("jobObject successfully removed", true);
+        }
+
+        public void Restore(int restorePointNumber, string path = null)
+        {
+            RestorePoint restorePoint = _restorePoints.FirstOrDefault(point => point.Number == restorePointNumber);
+            if (restorePoint == null)
+            {
+                _logger.Log("restorePoint with this number doesnt exists");
+                throw new BackupsExtraException("restorePoint with this number doesnt exists");
+            }
+
+            _repositoryType.Restore(restorePoint);
         }
 
         private void CleanRestorePoints()
         {
             _cleaningPointsAlgorithm.Clean(_restorePoints, _archiver.IsMergeble);
+            _logger.Log("RestorePoints successfully clean", true);
         }
     }
 }

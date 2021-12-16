@@ -8,5 +8,9 @@ namespace BackupsExtra.Entities
         public void Store(string folderPath, IEnumerable<Storage> storages)
         {
         }
+
+        public void Restore(RestorePoint restorePoint)
+        {
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace BackupsExtra.Entities
         public void Clean(List<RestorePoint> restorePoints, bool isMergeable)
         {
             int restorePointsSizeAfterCleaning = restorePoints.Count;
-            foreach (RestorePoint restorePoint in restorePoints.Where(restorePoint =>
+            foreach (RestorePoint unused in restorePoints.Where(restorePoint =>
                          (restorePoints.Count - restorePoint.Number < _amount &&
                           restorePoint.CreationTime >= _dateTime) ||
                          (restorePoints.Count - restorePoint.Number < _amount && _atLeastOneLimit) ||
