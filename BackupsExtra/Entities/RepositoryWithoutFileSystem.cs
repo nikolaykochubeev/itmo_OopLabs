@@ -9,7 +9,7 @@ namespace BackupsExtra.Entities
         {
         }
 
-        public void Restore(RestorePoint restorePoint)
+        public void Restore(RestorePoint restorePoint, string path)
         {
         }
     }

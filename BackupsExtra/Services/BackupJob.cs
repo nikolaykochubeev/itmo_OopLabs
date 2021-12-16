@@ -87,7 +87,7 @@ namespace BackupsExtra.Services
                 throw new BackupsExtraException("restorePoint with this number doesnt exists");
             }
 
-            _repositoryType.Restore(restorePoint);
+            _repositoryType.Restore(restorePoint, path);
         }
 
         private void CleanRestorePoints()

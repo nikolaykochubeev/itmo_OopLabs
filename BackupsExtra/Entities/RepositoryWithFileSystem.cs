@@ -28,7 +28,7 @@ namespace BackupsExtra.Entities
             }
         }
 
-        public void Restore(RestorePoint restorePoint)
+        public void Restore(RestorePoint restorePoint, string path)
         {
             if (restorePoint is null)
                 throw new BackupsException("restorePoint can not be null");
@@ -37,13 +37,14 @@ namespace BackupsExtra.Entities
                 using ZipArchive zipArchive = ZipFile.OpenRead(storage.ArchivePath);
                 foreach (ArchivedObject archivedObject in storage.ArchivedObjects)
                 {
-                    if (File.Exists(archivedObject.FilePath))
+                    string pathForRestore = path ?? archivedObject.FilePath;
+                    if (File.Exists(pathForRestore))
                     {
-                        File.Delete(archivedObject.FilePath);
+                        File.Delete(pathForRestore);
                     }
 
                     zipArchive.Entries.FirstOrDefault(x => x.Name == Path.GetFileName(archivedObject.FilePath))
-                        ?.ExtractToFile(archivedObject.FilePath);
+                        ?.ExtractToFile(pathForRestore);
                 }
             }
         }
