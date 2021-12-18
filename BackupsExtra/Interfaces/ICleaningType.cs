@@ -4,6 +4,6 @@ namespace BackupsExtra.Interfaces
 {
     public interface ICleaningType
     {
-        void Clean(RestorePoint oldRestorePoint, RestorePoint youngRestorePoint, bool isMergeable);
+        void Clean(RestorePoint oldRestorePoint, RestorePoint youngRestorePoint);
     }
 }

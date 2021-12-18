@@ -14,7 +14,6 @@ namespace BackupsExtra.Entities
             CreationTime = creationTime;
         }
 
-        public string ArchiverType { get; }
         public IReadOnlyList<Storage> Storages => _storages;
         public int Number { get; }
         public DateTime CreationTime { get; }

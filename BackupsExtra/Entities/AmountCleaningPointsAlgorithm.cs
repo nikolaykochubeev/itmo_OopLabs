@@ -16,11 +16,11 @@ namespace BackupsExtra.Entities
             _cleaningType = cleaningType;
         }
 
-        public void Clean(List<RestorePoint> restorePoints, bool isMergeable)
+        public void Clean(List<RestorePoint> restorePoints)
         {
             for (int i = 0; i < restorePoints.Count - (_amount - 1); i++)
             {
-                _cleaningType.Clean(restorePoints[i], restorePoints[i + 1], isMergeable);
+                _cleaningType.Clean(restorePoints[i], restorePoints[i + 1]);
                 restorePoints.Remove(restorePoints[i]);
             }
         }

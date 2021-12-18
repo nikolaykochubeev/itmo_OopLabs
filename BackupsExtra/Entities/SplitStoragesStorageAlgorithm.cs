@@ -5,15 +5,13 @@ using BackupsExtra.Interfaces;
 
 namespace BackupsExtra.Entities
 {
-    public class SplitStoragesArchiver : IArchiver
+    public class SplitStoragesStorageAlgorithm : IStorageAlgorithm
     {
-        public bool IsMergeble { get; } = true;
-
-        public List<Storage> Run(string directoryPath, IRepository repository, IEnumerable<BackupsExtra.Entities.JobObject> jobObjects)
+        public List<Storage> Run(string directoryPath, IRepository repository, IArchiverType archiverType, IEnumerable<BackupsExtra.Entities.JobObject> jobObjects)
         {
             var storages = jobObjects.Select(jobObject =>
                 new Storage(Guid.NewGuid(), directoryPath, new BackupsExtra.Entities.ArchivedObject(jobObject))).ToList();
-            repository.Store(directoryPath, storages);
+            repository.Store(directoryPath, storages, archiverType);
             return storages;
         }
     }

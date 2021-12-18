@@ -21,7 +21,7 @@ namespace BackupsExtra.Entities
             _atLeastOneLimit = atLeastOneLimit;
         }
 
-        public void Clean(List<RestorePoint> restorePoints, bool isMergeable)
+        public void Clean(List<RestorePoint> restorePoints)
         {
             int restorePointsSizeAfterCleaning = restorePoints.Count;
             foreach (RestorePoint unused in restorePoints.Where(restorePoint =>
@@ -42,7 +42,7 @@ namespace BackupsExtra.Entities
                      restorePoints[i].CreationTime < _dateTime) &&
                     (restorePoints.Count - restorePoints[i].Number >= _amount || !_atLeastOneLimit) &&
                     (restorePoints[i].CreationTime < _dateTime || !_atLeastOneLimit)) continue;
-                _cleaningType.Clean(restorePoints[i], restorePoints[i + 1], isMergeable);
+                _cleaningType.Clean(restorePoints[i], restorePoints[i + 1]);
                 restorePoints.Remove(restorePoints[i]);
             }
         }

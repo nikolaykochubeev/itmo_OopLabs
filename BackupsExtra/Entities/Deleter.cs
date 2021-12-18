@@ -1,16 +1,14 @@
-﻿using System.IO;
-using BackupsExtra.Interfaces;
-using BackupsExtra.Tools;
+﻿using BackupsExtra.Interfaces;
 
 namespace BackupsExtra.Entities
 {
     public class Deleter : ICleaningType
     {
-        public void Clean(RestorePoint oldRestorePoint, RestorePoint youngRestorePoint, bool isMergeable)
+        public void Clean(RestorePoint oldRestorePoint, RestorePoint youngRestorePoint)
         {
             foreach (Storage storage in oldRestorePoint.Storages)
             {
-                File.Delete(storage.ArchivePath);
+                storage.DeleteArchive();
             }
         }
     }

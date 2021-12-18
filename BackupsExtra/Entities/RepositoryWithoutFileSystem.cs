@@ -5,11 +5,7 @@ namespace BackupsExtra.Entities
 {
     public class RepositoryWithoutFileSystem : IRepository
     {
-        public void Store(string folderPath, IEnumerable<Storage> storages)
-        {
-        }
-
-        public void Restore(RestorePoint restorePoint, string path)
+        public void Store(string folderPath, IEnumerable<Storage> storages, IArchiverType archiverType)
         {
         }
     }

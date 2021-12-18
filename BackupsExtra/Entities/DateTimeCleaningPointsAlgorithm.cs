@@ -17,12 +17,12 @@ namespace BackupsExtra.Entities
 
         public DateTime Time { get; private set; }
 
-        public void Clean(List<RestorePoint> restorePoints, bool isMergeable)
+        public void Clean(List<RestorePoint> restorePoints)
         {
             for (int i = 0; i < restorePoints.Count; i++)
             {
                 if (restorePoints[i].CreationTime >= Time) continue;
-                _cleaningType.Clean(restorePoints[i], restorePoints[i + 1], isMergeable);
+                _cleaningType.Clean(restorePoints[i], restorePoints[i + 1]);
                 restorePoints.Remove(restorePoints[i]);
             }
         }

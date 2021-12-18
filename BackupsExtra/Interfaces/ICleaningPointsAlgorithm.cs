@@ -5,6 +5,6 @@ namespace BackupsExtra.Interfaces
 {
     public interface ICleaningPointsAlgorithm
     {
-        void Clean(List<RestorePoint> restorePoints, bool isMergeable);
+        void Clean(List<RestorePoint> restorePoints);
     }
 }

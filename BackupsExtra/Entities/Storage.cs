@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace BackupsExtra.Entities
 {
@@ -17,6 +18,13 @@ namespace BackupsExtra.Entities
         public string ArchivePath { get; }
 
         public Guid Id { get; }
+
         public IReadOnlyList<ArchivedObject> ArchivedObjects => _archivedObjects;
+
+        public void DeleteArchive()
+        {
+            if (File.Exists(ArchivePath))
+                File.Delete(ArchivePath);
+        }
     }
 }
