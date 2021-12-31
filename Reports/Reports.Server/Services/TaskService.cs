@@ -45,9 +45,9 @@ namespace Reports.Server.Services
             return _context.Tasks.Where(task => task.EmployeeId == id);
         }
         
-        public async Task<TaskModel> Update(Guid taskId, Guid newEmployeeId)
+        public async Task<TaskModel> Update(Guid taskId, Guid employeeId, string text, TaskStatus taskStatus)
         {
-            if (await _context.Employees.FindAsync(newEmployeeId) is null)
+            if (await _context.Employees.FindAsync(employeeId) is null)
             {
                 throw new ArgumentException("Employee with this guid doesnt exists");
             }
@@ -58,32 +58,8 @@ namespace Reports.Server.Services
                 throw new ArgumentException("taskModel with this name does not exists");
             }
 
-            dbTaskModel.EmployeeId = newEmployeeId;
-            await _context.SaveChangesAsync();
-            return dbTaskModel;
-        }
-
-        public async Task<TaskModel> Update(Guid taskId, string text)
-        {
-            TaskModel dbTaskModel = await _context.Tasks.FindAsync(taskId);
-            if (dbTaskModel is null)
-            {
-                throw new ArgumentException("taskModel with this name does not exists");
-            }
-
+            dbTaskModel.EmployeeId = employeeId;
             dbTaskModel.Text = text;
-            await _context.SaveChangesAsync();
-            return dbTaskModel;
-        }
-
-        public async Task<TaskModel> Update(Guid taskId, TaskStatus taskStatus)
-        {
-            TaskModel dbTaskModel = await _context.Tasks.FindAsync(taskId);
-            if (dbTaskModel is null)
-            {
-                throw new ArgumentException("taskModel with this name does not exists");
-            }
-
             dbTaskModel.Status = taskStatus;
             await _context.SaveChangesAsync();
             return dbTaskModel;

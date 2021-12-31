@@ -10,7 +10,7 @@ namespace Reports.Server.Services
         Task<ReportModel> Create(ReportModel reportModel);
         IEnumerable<ReportModel> GetEmployeesReports();
         Task<ReportModel> FindReportById(Guid id);
-        Task<ReportModel> FindReportByEmployeeId(Guid id);
+        Task<IEnumerable<ReportModel>> FindReportByEmployeeId(Guid id);
         IEnumerable<ReportModel> GetWrittenReports();
         IEnumerable<ReportModel> GetNotWrittenReports(); 
         Task<ReportModel> AddTask(Guid reportId, Guid taskId);

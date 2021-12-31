@@ -11,6 +11,12 @@ namespace Reports.Server.Services
     public class ReportService : IReportService
     {
         private readonly ReportsDatabaseContext _context;
+
+        public ReportService(ReportsDatabaseContext context)
+        {
+            _context = context;
+        }
+
         public async Task<ReportModel> Create(ReportModel reportModel)
         {
             await _context.Reports.AddAsync(reportModel);
@@ -28,9 +34,9 @@ namespace Reports.Server.Services
             return await _context.Reports.FindAsync(id);
         }
         
-        public async Task<ReportModel> FindReportByEmployeeId(Guid id)
+        public async Task<IEnumerable<ReportModel>> FindReportByEmployeeId(Guid id)
         {
-            return await _context.Reports.FirstOrDefaultAsync(report => report.EmployeeId == id);
+            return _context.Reports.Where(report => report.EmployeeId == id);
         }
 
         public IEnumerable<ReportModel> GetWrittenReports()
