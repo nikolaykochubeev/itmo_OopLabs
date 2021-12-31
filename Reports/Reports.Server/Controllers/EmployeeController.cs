@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Reports.DAL.DTO;
 using Reports.DAL.Entities;
 using Reports.Server.Services;
 
 namespace Reports.Server.Controllers
-{
+{   
     [ApiController]
     [Route("/employees")]
     public class EmployeeController : ControllerBase
@@ -18,39 +20,61 @@ namespace Reports.Server.Controllers
         {
             _service = service;
         }
-
+        [Route("/employees/create")]
         [HttpPost]
-        public async Task<Employee> Create([FromQuery] string name)
+        public async Task<EmployeeModel> Create([FromBody] EmployeeDTO employeeDto)
         {
-            return await _service.Create(name);
+            return await _service.Create(new EmployeeModel(employeeDto));
         }
-
+        [Route("/employees/find")]
         [HttpGet]
-        public IActionResult Find([FromQuery] string name, [FromQuery] Guid id)
-        {
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                Employee result = _service.FindByName(name);
-                if (result != null)
-                {
-                    return Ok(result);
-                }
+         public IActionResult Find([FromQuery] string name, [FromQuery] Guid id)
+         {
+             if (!string.IsNullOrWhiteSpace(name))
+             {
+                 Task<EmployeeModel> result = _service.FindByName(name);
+                 if (result != null)
+                 {
+                     return Ok(result.Result);
+                 }
+        
+                 return NotFound();
+             }
 
-                return NotFound();
-            }
+             if (id != Guid.Empty)
+             {
+                 Task<EmployeeModel> result = _service.FindById(id);
+                 if (result != null)
+                 {
+                     return Ok(result.Result);
+                 }
 
-            if (id != Guid.Empty)
-            {
-                Employee result = _service.FindById(id);
-                if (result != null)
-                {
-                    return Ok(result);
-                }
+                 return NotFound();
+             }
 
-                return NotFound();
-            }
+             return StatusCode((int)HttpStatusCode.BadRequest);
+         }
 
-            return StatusCode((int) HttpStatusCode.BadRequest);
-        }
+         [Route("/employees/delete")]
+         [HttpPost]
+         public IActionResult Delete([FromQuery] Guid employeeId)
+         {
+             return Ok(_service.Delete(employeeId).Result);
+         }
+         
+         [Route("/employees/getAllEmployees")]
+         [HttpGet]
+         public IEnumerable<EmployeeModel> GetAllEmployees()
+         {
+             return _service.GetEmployees();
+         }
+
+         [Route("/employees/update")]
+         [HttpPatch]
+         public IActionResult Update([FromBody] EmployeeDTO employeeDto)
+         {
+             return Ok(_service.Update(employeeDto.Id, employeeDto.Name, employeeDto.Status));
+         }
+         
     }
 }

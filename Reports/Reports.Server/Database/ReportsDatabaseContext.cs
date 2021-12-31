@@ -10,11 +10,15 @@ namespace Reports.Server.Database
             this.Database.EnsureCreated();
         }
 
-        public DbSet<Employee> Employees { get; set; }
+        public DbSet<EmployeeModel> Employees { get; set; }
+        public DbSet<TaskModel> Tasks { get; set; }
+        public DbSet<ReportModel> Reports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Employee>().ToTable("Employees");
+            modelBuilder.Entity<EmployeeModel>().ToTable("Employees");
+            modelBuilder.Entity<TaskModel>().ToTable("Tasks");
+            modelBuilder.Entity<ReportModel>().ToTable("Reports");
             base.OnModelCreating(modelBuilder);
         }
     }

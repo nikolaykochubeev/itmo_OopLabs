@@ -15,6 +15,7 @@ namespace Reports.Clients
             FindEmployeeById("ac8ac3ce-f738-4cd6-b131-1aa0e16eaadc");
             FindEmployeeByName("aboba");
             FindEmployeeByName("kek");
+            GetAllEmployee();
         }
 
         private static void CreateEmployee()
@@ -30,7 +31,7 @@ namespace Reports.Clients
             var responseString = readStream.ReadToEnd();
 
             // Десериализация (перевод JSON'a к C# классу)
-            var employee = JsonConvert.DeserializeObject<Employee>(responseString);
+            var employee = JsonConvert.DeserializeObject<EmployeeModel>(responseString);
 
             Console.WriteLine("Created employee:");
             Console.WriteLine($"Id: {employee.Id}");
@@ -40,7 +41,7 @@ namespace Reports.Clients
         private static void FindEmployeeById(string id)
         {
             // Запрос к серверу
-            var request = HttpWebRequest.Create($"https://localhost:5001/employees/?id={id}");
+            WebRequest request = HttpWebRequest.Create($"https://localhost:5001/employees/?id={id}");
             request.Method = WebRequestMethods.Http.Get;
 
             try
@@ -53,7 +54,7 @@ namespace Reports.Clients
                 var responseString = readStream.ReadToEnd();
 
                 // Десериализация (перевод JSON'a к C# классу)
-                var employee = JsonConvert.DeserializeObject<Employee>(responseString);
+                var employee = JsonConvert.DeserializeObject<EmployeeModel>(responseString);
 
                 Console.WriteLine("Found employee by id:");
                 Console.WriteLine($"Id: {employee.Id}");
@@ -81,7 +82,34 @@ namespace Reports.Clients
                 var responseString = readStream.ReadToEnd();
 
                 // Десериализация (перевод JSON'a к C# классу)
-                var employee = JsonConvert.DeserializeObject<Employee>(responseString);
+                var employee = JsonConvert.DeserializeObject<EmployeeModel>(responseString);
+
+                Console.WriteLine("Found employee by name:");
+                Console.WriteLine($"Id: {employee.Id}");
+                Console.WriteLine($"Name: {employee.Name}");
+            }
+            catch (WebException e)
+            {
+                Console.WriteLine("Employee was not found");
+                Console.Error.WriteLine(e.Message);
+            }
+        }
+
+        public static void GetAllEmployee()
+        {
+            var request = HttpWebRequest.Create($"https://localhost:5001/employees/?name");
+            request.Method = WebRequestMethods.Http.Get;
+            try
+            {
+                var response = request.GetResponse();
+
+                // Чтение ответа
+                var responseStream = response.GetResponseStream();
+                using var readStream = new StreamReader(responseStream, Encoding.UTF8);
+                var responseString = readStream.ReadToEnd();
+
+                // Десериализация (перевод JSON'a к C# классу)
+                var employee = JsonConvert.DeserializeObject<EmployeeModel>(responseString);
 
                 Console.WriteLine("Found employee by name:");
                 Console.WriteLine($"Id: {employee.Id}");
