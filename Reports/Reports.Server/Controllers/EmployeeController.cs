@@ -56,7 +56,7 @@ namespace Reports.Server.Controllers
          }
 
          [Route("/employees/delete")]
-         [HttpPost]
+         [HttpDelete]
          public IActionResult Delete([FromQuery] Guid employeeId)
          {
              return Ok(_service.Delete(employeeId).Result);
@@ -73,7 +73,7 @@ namespace Reports.Server.Controllers
          [HttpPatch]
          public IActionResult Update([FromBody] EmployeeDTO employeeDto)
          {
-             return Ok(_service.Update(employeeDto.Id, employeeDto.Name, employeeDto.Status));
+             return Ok(_service.Update(employeeDto.Id, employeeDto.Name, employeeDto.Status).Result);
          }
          
     }

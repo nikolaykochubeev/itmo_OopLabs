@@ -11,13 +11,13 @@ namespace Reports.DAL.Entities
         }
         public TaskModel(TaskDto taskDto)
         {
-            if (string.IsNullOrWhiteSpace(taskDto.Text))
+            if (taskDto is null)
             {
-                throw new ArgumentNullException(nameof(taskDto.Text), "Text is invalid");
+                throw new ArgumentNullException(nameof(taskDto), "TaskDTO is invalid");
             }
 
             Id = Guid.NewGuid();
-            Text = taskDto.Text;
+            Comment = taskDto.Comment;
             EmployeeId = taskDto.EmployeeId;
             Status = taskDto.Status;
             CreationTime = DateTime.Now;
@@ -25,7 +25,7 @@ namespace Reports.DAL.Entities
         }
         
         public Guid Id { get; set; }
-        public string Text { get; set; }
+        public Comment Comment { get; set; }
         public Guid EmployeeId { get; set; }
         public TaskStatus Status { get; set; }
         public DateTime CreationTime { get; set; }

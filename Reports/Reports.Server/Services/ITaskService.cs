@@ -13,7 +13,8 @@ namespace Reports.Server.Services
         IEnumerable<TaskModel> GetEmployeesTasks();
         Task<TaskModel> Find(Guid id);
         IEnumerable<TaskModel> Find(DateTime creationTime);
-        public IEnumerable<TaskModel> FindEmployeeTasks(Guid id);
-        Task<TaskModel> Update(Guid taskId, Guid employeeId, string text, TaskStatus taskStatus);
+        IEnumerable<TaskModel> FindEmployeeTasks(Guid id);
+        IEnumerable<Comment> GetAllTaskComments(Guid id);
+        Task<TaskModel> Update(Guid taskId, Guid employeeId, Comment comment, TaskStatus taskStatus);
     }
 }

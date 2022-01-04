@@ -13,12 +13,14 @@ namespace Reports.Server.Database
         public DbSet<EmployeeModel> Employees { get; set; }
         public DbSet<TaskModel> Tasks { get; set; }
         public DbSet<ReportModel> Reports { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EmployeeModel>().ToTable("Employees");
             modelBuilder.Entity<TaskModel>().ToTable("Tasks");
             modelBuilder.Entity<ReportModel>().ToTable("Reports");
+            modelBuilder.Entity<Comment>().ToTable("Comments");
             base.OnModelCreating(modelBuilder);
         }
     }

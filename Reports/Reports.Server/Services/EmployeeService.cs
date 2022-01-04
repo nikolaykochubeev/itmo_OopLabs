@@ -26,6 +26,10 @@ namespace Reports.Server.Services
         public async Task<EmployeeModel> Create(EmployeeModel employeeModel)
         {
             await _context.Employees.AddAsync(employeeModel);
+            if (employeeModel.Status == EmployeeStatus.Teamlead && _context.Employees.FirstOrDefault(employee => employee.Status == EmployeeStatus.Teamlead) is not null)
+            {
+                throw new ArgumentException("Teamlead already exists");
+            }
             await _context.SaveChangesAsync();
             return employeeModel;
         }
@@ -62,7 +66,7 @@ namespace Reports.Server.Services
 
         public async Task<EmployeeModel> Update(Guid employeeId, string name, EmployeeStatus status)
         {
-            EmployeeModel dbEmployeeModel = await _context.Employees.FindAsync(employeeId);
+            EmployeeModel dbEmployeeModel = _context.Employees.Find(employeeId);
             if (dbEmployeeModel is null)
             {
                 throw new ArgumentException("Employee with this id does not exists");

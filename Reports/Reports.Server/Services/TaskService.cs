@@ -44,8 +44,13 @@ namespace Reports.Server.Services
         {
             return _context.Tasks.Where(task => task.EmployeeId == id);
         }
-        
-        public async Task<TaskModel> Update(Guid taskId, Guid employeeId, string text, TaskStatus taskStatus)
+
+        public IEnumerable<Comment> GetAllTaskComments(Guid id)
+        {
+            return _context.Comments.Where(comment => comment.TaskId == id);
+        }
+
+        public async Task<TaskModel> Update(Guid taskId, Guid employeeId, Comment comment, TaskStatus taskStatus)
         {
             if (await _context.Employees.FindAsync(employeeId) is null)
             {
@@ -58,9 +63,14 @@ namespace Reports.Server.Services
                 throw new ArgumentException("taskModel with this name does not exists");
             }
 
+            if (dbTaskModel.Comment.Id != comment.Id)
+            {
+                _context.Comments.Add(comment);
+            }
             dbTaskModel.EmployeeId = employeeId;
-            dbTaskModel.Text = text;
+            dbTaskModel.Comment = comment;
             dbTaskModel.Status = taskStatus;
+            dbTaskModel.Comment = comment;
             await _context.SaveChangesAsync();
             return dbTaskModel;
         }

@@ -65,12 +65,20 @@ namespace Reports.Server.Controllers
             }
             return Ok(tasks);
         }
+        [Route("/tasks/GetComments")]
+        [HttpGet]
+        public IActionResult GetAllTaskComments([FromQuery] Guid id)
+        {
+            var comments = _service.GetAllTaskComments(id);
+            return Ok(comments);
+        }
+
 
         [Route("/tasks/update")]
         [HttpPatch]
         public IActionResult Update([FromBody] TaskDto taskDto)
         {
-            return Ok(_service.Update(taskDto.Id, taskDto.EmployeeId, taskDto.Text, taskDto.Status));
+            return Ok(_service.Update(taskDto.Id, taskDto.EmployeeId, taskDto.Comment, taskDto.Status).Result);
         }
     }
 }

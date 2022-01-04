@@ -1,24 +1,20 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Reports.DAL.Entities;
 
 namespace Reports.DAL.DTO
 {
     public class EmployeeDTO
     {
-        public EmployeeDTO(string name, EmployeeStatus employeeStatus)
-        {
-            Name = name;
-            Status = employeeStatus;
-        }
-
-        public EmployeeDTO(Guid id, string name, EmployeeStatus employeeStatus)
+        [JsonConstructor]
+        public EmployeeDTO(Guid id, string name, EmployeeStatus status)
         {
             Id = id;
             Name = name;
-            Status = employeeStatus;
+            Status = status;
         }
         public Guid Id { get; }
         public string Name { get; }
-        public EmployeeStatus Status;
+        public EmployeeStatus Status { get; }
     }
 }
